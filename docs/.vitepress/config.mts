@@ -3,7 +3,7 @@ import { DefaultTheme, defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'en-US',
-  base: "/",
+  base: "/gol-docs/",
   title: "CSA - Game of Life",
   description: "Computer System A Coursework - University of Bristol",
   themeConfig: {
