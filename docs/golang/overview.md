@@ -63,18 +63,18 @@ Every student is required to upload their full work to Blackboard.
 
 There will be three separate submissions points on Blackboard - one for the report and two for each implementation.
 
-::: tip Note on submission
+::: tip Note on submission:
 
 - For the report, you must submit a single file called `report.pdf`.
 
-- For the parallel implementation, you must submit a single zip file called `parallel.zip`. It must contain all the code required to compile and run the program.
+- For the parallel implementation, you must submit a single zip file called `parallel.zip`. It must contain all the code required to compile and run the program. Submit a complete copy of the skeleton, **not just the `gol` folder**.
 
 - For the distributed implementation, you must submit a single zip file called `distributed.zip`. It must contain all the code required to compile and run the program.
 
 - If you have multiple versions, only submit the ones you wish us to check for correctness (one zip for parallel and one for distributed). Other versions may be shared via OneDrive with Sion, Pui and Michael.
 :::
 
-::: warning Please notice
+::: warning Please note:
 
 - Submitting different filenames or file formats (e.g. `.docx`, `.tex`, `.7z` or `.rar`) will result in a mark penalty.
 - **Each team member** has to upload an **identical copy** of the team's work.

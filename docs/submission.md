@@ -8,7 +8,7 @@
 
   <!-- [**Report submission point**](https://www.ole.bris.ac.uk/webapps/assignment/uploadAssignment?content_id=_8308812_1&course_id=_257215_1&group_id=&mode=cpview) -->
 
-- For the parallel implementation, you must submit a single zip file called `parallel.zip`. It must contain all the code required to compile and run the program.
+- For the parallel implementation, you must submit a single zip file called `parallel.zip`. It must contain all the code required to compile and run the program. Submit a complete copy of the skeleton, **not just the `gol` folder**.
 
   **Parallel submission point will appear here later.**
 
