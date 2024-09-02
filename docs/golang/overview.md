@@ -38,8 +38,8 @@ All parts of the skeleton are commented. All the code has been written in Go.
 
 You will not be required to write any C code. If you have any questions about the skeleton please ask a TA for help.
 
-::: warning Please notice
-You **must not** modify any of the files ending in `_test.go`. We will be using these tests to judge the correctness of your implementation.
+::: warning Please note:
+You **must not** modify any of the files ending in `_test.go`. We will be using these tests to judge the correctness of your implementation. We will undo any changes you make to them.
 :::
 
 The skeleton code uses SDL.
