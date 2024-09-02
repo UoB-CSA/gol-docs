@@ -19,6 +19,10 @@ Do not spend hours trying to debug on your own; use pair programming, seek help 
 
 **Do not plagiarise.** Both team members should understand all code developed in detail.
 
+Do not have one team member do just the parallel task and the other do just the distributed task. There is significant overlap between the two. If you work separately then both team members will have to solve the same problems separately.
+
+Similarly, do not have one team member do the programming tasks and the other just write the report. You need an in-depth understanding of the code to write a good report. 
+
 ## Useful Links
 
 ::: info Video walkthrough of parallel component
