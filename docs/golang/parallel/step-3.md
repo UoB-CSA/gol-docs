@@ -9,7 +9,7 @@ The lab sheets included the use of a timer.
 
 Now using a ticker, report the number of cells that are still alive *every 2 seconds*.
 
-To report the count use the `AliveCellsCount` event. Also send the `TurnComplete` event after each complete iteration.
+To report the count use the `AliveCellsCount` event.
 
 To test your code, type the following in the terminal.
 
