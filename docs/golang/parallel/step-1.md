@@ -32,7 +32,7 @@ The functions `io.readPgmImage` and `startIo` are particularly important in this
 Your Game of Life code will interact with the user or the unit tests using the `events` channel.
 All events are defined in the file `gol/event.go`.
 In this step, you will only be working with the unit test `TestGol`.
-Therefore, you only need to send the `FinalTurnComplete` event.
+Therefore, you only need to send the `FinalTurnComplete` event, with the list of alive cells.
 
 ### Test
 
@@ -41,3 +41,9 @@ To test your serial, single-threaded code, type the following in the terminal, a
 ``` bash
 go test -v -run TestGol/-1$
 ```
+
+### Troubleshooting
+
+If the zero turn tests pass, then you are reading the input file correctly and are giving the right list of alive cells in `FinalTurnComplete`.
+
+If they fail, check your input and `FinalTurnComplete` logic **before** you start debugging your Game of Life turn logic.
