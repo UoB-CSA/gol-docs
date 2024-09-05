@@ -5,14 +5,14 @@
 
 Implement logic to visualise the state of the game using SDL.
 
-You will need to utilise `CellFlipped`, `CellsFlipped` and `TurnComplete` events to achieve this.
+You will need to utilise `CellFlipped` and `TurnComplete` events to achieve this.
 Check out `gol/event.go` and `sdl/loop.go` for details.
 
-> *Don't forget to send `Cell(s)Flipped` events for every initially alive cells before the first `StateChange` is sent.*
->
-> *You can collect many flipped cells and send `CellsFlipped` at a time instead of sending `CellFlipped` for every flipped cell.
-> You can send many times of `CellsFlipped` event in a turn, i.e., each worker could send `CellsFlipped`.
-> Please be careful not to send `CellFlipped` and `CellsFlipped` at the same time, as they may conflict.*
+> *Don't forget to send `CellFlipped` events for every initially alive cells before the first `StateChange` is sent.*
+
+> ***NOTE:** You can collect many flipped cells and send `CellsFlipped` with all of them instead of sending `CellFlipped` for every flipped cell.
+> You can send more than one `CellsFlipped` event in a turn, i.e., each worker could send `CellsFlipped`.
+> Be careful not to send both `CellFlipped` and `CellsFlipped` events for the same cell, or you will flip it twice*
 
 \
 To test the visualisation and control rules, type the following in the terminal.
