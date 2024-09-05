@@ -3,7 +3,7 @@
 
 ## Success Criteria
 
-- Pass all test cases under `TestGol`, `TestAlive`, `TestPgm` and `TestSdl`.
+- Pass all test cases under `TestGol`, `TestAlive`, `TestPgm`, `TestKeyboard` and `TestSdl`.
 - Use the correct number of workers as requested in `gol.Params`.
 - Display the live progress of the game using SDL.
 - Ensure that all keyboard control rules work correctly.
