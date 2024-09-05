@@ -56,6 +56,7 @@ function golangDocs(): DefaultTheme.SidebarItem[] {
             { text: 'Step 3', link: '/golang/parallel/step-3' },
             { text: 'Step 4', link: '/golang/parallel/step-4' },
             { text: 'Step 5', link: '/golang/parallel/step-5' },
+            { text: 'Step 6', link: '/golang/parallel/step-6' },
             { text: 'Success Criteria', link: '/golang/parallel/success-criteria' },
             { text: 'In Your Report', link: '/golang/parallel/in-your-report' },
           ]
