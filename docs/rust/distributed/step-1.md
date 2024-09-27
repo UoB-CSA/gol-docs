@@ -8,17 +8,17 @@ You should be able to test your serial code using `cargo test --release --test g
 
 ![Step 1](/assets/cw_diagrams-Distributed_1.png)
 
-Separate your implementation into two components:
+Migrate and separate your implementation into the two components provided in the new distributed skeleton:
 
-- The local controller, will be responsible for IO and capturing keypresses.
-- The Gol Engine, will be responsible for actually processing the turns of Game of Life.
+- The local controller (controller folder), will be responsible for IO and capturing keypresses.
+- The Gol Engine (server folder), will be responsible for actually processing the turns of Game of Life.
 
 You must be able to run the local controller as a client on a local machine, and the Gol engine as a server on an AWS node.
 
 Start by implementing a basic controller which can tell the logic engine to evolve Game of Life for the number of turns specified in `Params.turns`.
 You can achieve this by implementing a single, blocking RPC call to process all requested turns.
 
-To test your implementation, type the following in the terminal of your **local controller**.
+To test your implementation, type the following in the terminal of your **local controller** (cd to the controller folder first).
 
 ```bash
 cargo test --release --test gol -- --threads 1

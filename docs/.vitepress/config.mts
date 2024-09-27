@@ -95,6 +95,7 @@ function golangDocs(): DefaultTheme.SidebarItem[] {
             },
             { text: 'Distributed Implementation', collapsed: true, link: '/rust/distributed/', items:
               [
+                { text: 'Step 0', link: '/rust/distributed/step-0' },
                 { text: 'Step 1', link: '/rust/distributed/step-1' },
                 { text: 'Step 2', link: '/rust/distributed/step-2' },
                 { text: 'Step 3', link: '/rust/distributed/step-3' },
