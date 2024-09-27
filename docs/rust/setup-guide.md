@@ -1,8 +1,73 @@
 # Setup Guide
 
-## Setup on Native Windows
+## Setup on WSL2 / Linux / macOS
 
-### Install the Rust Programming Language
+### 1. Install the Rust Programming Language
+
+To install Rust on WSL2, Linux or macOS, type the following in the terminal, then follow the on-screen instructions to install Rust.
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+Choose `Proceed with installation (default)`
+
+For WSL2 / Linux: You may also need to install compiler toolchain, type
+
+```bash
+sudo apt update
+sudo apt install build-essential
+```
+
+### 2. Install SDL2 Library
+
+Type the following in the terminal to install SDL2.
+
+::: code-group
+
+```bash [WSL2]
+sudo apt install libsdl2-dev
+```
+
+```bash [Ubuntu]
+sudo apt install libsdl2-dev
+```
+
+```bash [macOS]
+brew install sdl2
+```
+
+:::
+
+::: tip For Lab machines
+SDL2 should already be installed and working on school's linux lab machines.
+
+**For WSL2 users**
+
+If you are using WSL2, ensure your skeleton is located within the WSL2 file system. Specifically, **your project should be located at `~/.../gol-rs-skeleton`, NOT at `/mnt/.../gol-rs-skeleton`**
+
+<!-- **For macOS**
+
+macOS users need to export library path from homebrew, add the following line to the end of `~/.zshrc`.
+(you can edit `~/.zshrc` by typing `nano ~/.zshrc` in the terminal)
+
+<div class="info custom-block" style="padding-top: 10px">
+export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
+</div>
+
+then type the following in the terminal
+
+``` bash
+source ~/.zshrc
+``` -->
+
+:::
+
+::: details Only if you don't want to use WSL2 - setup on native Windows
+\
+**If you are setup on WSL2, please ignore the followings.**
+
+#### 1. Install the Rust Programming Language on native Windows
 
 To start using Rust, download the `Rustup` - the Rust installer and version management tool, then run the program and follow the onscreen instructions.
 
@@ -10,11 +75,9 @@ Download RUSTUP-INIT [here](https://www.rust-lang.org/learn/get-started)
 
 Choose `Proceed with installation (default)`
 
-::: tip
-You may also need to install the [**Visual Studio C++ Build tools**](https://visualstudio.microsoft.com/visual-cpp-build-tools/) when prompted to do so.
-:::
+OPTIONAL: You may also need to install the [**Visual Studio C++ Build tools**](https://visualstudio.microsoft.com/visual-cpp-build-tools/) when prompted to do so.
 
-### Install SDL2 Library
+#### 2. Install SDL2 Library on native Windows
 
 - Download SDL development libraries [here](https://github.com/libsdl-org/SDL/releases/latest),
 choose `SDL2-devel-2.x.x-VC.zip`.
@@ -31,73 +94,6 @@ choose `SDL2-devel-2.x.x-VC.zip`.
     SDL2-devel-2.x.x-VC\SDL2-2.x.x\lib\x64\
     </div>
     to the root inside the `gol-rs-skeleton` folder.
-
-## Setup on WSL2
-::: warning For WSL2 users
-Please refer to the [**Setup on Linux**](#setup-on-linux-macos-wsl2) instructions; setting up on WSL2 is identical to setting up on Linux.
-
-However, it's important to note a significant performance loss impacting benchmarks and leading to a suboptimal development experience. For this coursework, we recommend using native Windows instead of WSL2.
-
-If you opt for WSL2 development, **ensure your workspace is located within the WSL2 file system**.
-:::
-
-## Setup on Linux / macOS / WSL2
-
-### Install the Rust Programming Language
-
-To install Rust on Linux, macOS or WSL2, type the following in the terminal, then follow the on-screen instructions to install Rust.
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-Choose `Proceed with installation (default)`
-
-You may also need to install compiler toolchain for Linux, type
-
-```bash
-sudo apt update
-sudo apt install build-essential
-```
-
-### Install SDL2 Library
-
-Type the following in the terminal to install SDL2.
-
-::: tip For lab machines
-SDL2 should already be installed and working on school's linux lab machines
-:::
-
-::: code-group
-
-```sh [macOS]
-brew install sdl2
-```
-
-```sh [Ubuntu]
-sudo apt-get install libsdl2-dev
-```
-
-```sh [WSL2]
-sudo apt-get install libsdl2-dev
-```
-
-:::
-
-::: warning For macOS users
-macOS users need to export library path from homebrew, add the following line to the end of `~/.zshrc`.
-(you can edit `~/.zshrc` by typing `nano ~/.zshrc` in the terminal)
-
-<div class="info custom-block" style="padding-top: 10px">
-export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
-</div>
-
-then type the following in the terminal
-
-``` bash
-source ~/.zshrc
-```
-
 :::
 
 ## Choose an IDE / Editor
