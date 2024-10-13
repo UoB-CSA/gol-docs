@@ -18,8 +18,10 @@ You must be able to run the local controller as a client on a local machine, and
 Start by implementing a basic controller which can tell the logic engine to evolve Game of Life for the number of turns specified in `gol.Params.Turns`.
 You can achieve this by implementing a single, blocking RPC call to process all requested turns.
 
+### Test
+
 To test your implementation, type the following in the terminal of your **local controller**.
 
-```bash
+``` bash
 go test -v -run TestGol/-1$
 ```

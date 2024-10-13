@@ -1,5 +1,9 @@
 # Distributed Implementation
 
+<div class="warning custom-block" style="padding-top: 10px">
+<b>This guide is for the Rust version of the coursework, which is offered as an optional extension.</b>
+</div>
+
 In this stage, you are required to create an implementation that uses a number of
 AWS nodes to cooperatively calculate the new state of the Game of Life board,
 and communicate state between machines over a network.

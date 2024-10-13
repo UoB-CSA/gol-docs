@@ -1,7 +1,7 @@
 <!--@include: index.md-->
 #
 
-## Step 5 - New for 22 - go straight to Step 6
+## Step 5 (Consider going straight to Step 6)
 
 ![Step 5](/assets/cw_diagrams-Distributed_5.png)
 

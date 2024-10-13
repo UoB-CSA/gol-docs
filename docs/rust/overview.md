@@ -21,6 +21,10 @@ All parts of the skeleton are commented. All the code has been written in Rust.
 
 You will not be required to write any C or Golang code for this extension. If you have any questions about the skeleton please ask a TA for help.
 
-::: warning
+::: warning Please note
 You **must not** modify any of the files ending in `_test.rs`. We will be using these tests to judge the correctness of your implementation.
+:::
+
+::: warning For WSL2 users
+If you are using WSL2, ensure your skeleton is located within the WSL2 file system. Specifically, **your project should be located at `~/.../gol-rs-skeleton`, NOT at `/mnt/.../gol-rs-skeleton`**
 :::

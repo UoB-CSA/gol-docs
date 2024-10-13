@@ -13,15 +13,15 @@ To install protobuf, type
 
 ::: code-group
 
-```bash [WSL2]
+``` bash [WSL2]
 sudo apt install protobuf-compiler
 ```
 
-```bash [Ubuntu]
+``` bash [Ubuntu]
 sudo apt install protobuf-compiler
 ```
 
-```bash [macOS]
+``` bash [macOS]
 brew install protobuf
 ```
 
@@ -36,7 +36,7 @@ Add `C:\Program Files\protoc-xxx-win64\bin` to your **path** environment variabl
 
 To check if protobuf compiler is working, type
 
-```bash
+``` bash
 protoc --version
 ```
 
@@ -55,7 +55,7 @@ If you are using `git clone`, switch to the `distributed` branch by typing `git 
 If you are using `Use this template`, please check `Include all branches` and switch to the `distributed` branch as well.
 :::
 
-::: tip For WSL2 users
+::: warning For WSL2 users
 If you are using WSL2, ensure your skeleton is located within the WSL2 file system. Specifically, **your project should be located at `~/.../gol-rs-skeleton`, NOT at `/mnt/.../gol-rs-skeleton`**
 :::
 
@@ -117,7 +117,22 @@ $ cargo run --release
 Open `controller/src/gol/distributor.rs`, you may find it similar to the parallel version, except we've made `remote_distributor()` an async function.
 
 In `example_rpc_call()`,
-you will see that we first convert a 2D world `Vec<Vec<CellValue>>` to bytes `Vec<u8>`.
+we connect to the server first.
+
+``` rust
+let mut client = ControllerHandlerClient::connect(format!("http://{}", server_addr)).await?;
+```
+
+The server address `server_addr` is defined in `Params` struct, and the `Params` struct is converted from `Args (controller/src/args.rs)` struct that defines command line arguments including the default server address.
+We used **[Clap](https://github.com/clap-rs/clap)** as the command line argument parser.
+
+To pass custom server address by command line argument, type (127.0.0.1:8030 in this case)
+
+``` bash
+cargo run --release -- --server_addr "127.0.0.1:8030"
+```
+
+After connected to the server, you will see that we create and convert a 2D world `Vec<Vec<CellValue>>` to bytes `Vec<u8>`.
 
 ``` rust
 let bytes = world.iter().flat_map(|row| row.as_bytes()).copied().collect();
@@ -144,13 +159,13 @@ Note that we also assert the correctness of the calculation performed by the ser
 match response {
     Ok(response) => {
         let msg = response.into_inner();
-        info!("response: {:?}", msg);
+        log::info!(target: "Distributor", "response: {:?}", msg);
         assert_eq!(
             msg.cells_count as usize,
             world.iter().flatten().filter(|cell| cell.is_alive()).count()
         );
     },
-    Err(e) => log::error!("Server error: {}", e),
+    Err(e) => log::error!(target: "Distributor", "Server error: {}", e),
 }
 ```
 
@@ -179,7 +194,7 @@ In `push_world()`, we extract the data from the request and save the `width` and
 ``` rust
 async fn push_world(&self, request: Request<World>) -> Result<Response<AliveCellsCount>, Status> {
     let world = request.into_inner(); // [!code highlight]
-    info!("request: {:?}", world);
+    log::info!("request: {:?}", world);
     *self.width.write().await = world.width; // [!code highlight]
     *self.height.write().await = world.height; // [!code highlight]
     ...
@@ -200,7 +215,7 @@ You can notice `width`, `height` and `cell_values` are wrapped with `RwLock` (re
 
 ``` rust
 pub struct Broker {
-    shutdown_tx: UnboundedSender<()>,
+    shutdown_tx: Sender<()>,
     width: RwLock<u32>, // [!code highlight]
     height: RwLock<u32>, // [!code highlight]
     cell_values: RwLock<Vec<Vec<CellValue>>>, // [!code highlight]

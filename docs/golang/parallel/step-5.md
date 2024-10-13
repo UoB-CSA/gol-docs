@@ -10,7 +10,7 @@ Note that the running SDL provides you with a channel containing the relevant ke
     > ***NOTE:** Don't forget to send an `ImageOutputComplete` event after a PGM image is saved.*
 - If `q` is pressed, stop executing Gol computation, save the current state of the board as a PGM image, then terminate the program.
     > ***NOTE:** Your distributor should behave as following after `q` is pressed:*
-    > 
+    >
     > *Complete the current turn \
     > Send a `FinalTurnComplete` event \
     > Save the final state as PGM image and send an `ImageOutputComplete` event \
@@ -20,7 +20,8 @@ Note that the running SDL provides you with a channel containing the relevant ke
     > ***NOTE:**
     > It is **necessary** for `q` and `s` to work while the execution is paused.*
 
-\
+### Test
+
 To test the visualisation and control rules, type the following in the terminal.
 
 ::: code-group
@@ -40,4 +41,3 @@ You can also run the program and test the control rules manually by typing the f
 ``` bash
 go run .
 ```
-

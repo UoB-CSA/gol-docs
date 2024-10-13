@@ -8,11 +8,15 @@ Implement logic to visualise the state of the game using SDL.
 You will need to utilise `CellFlipped`, `CellsFlipped` and `TurnComplete` events to achieve this.
 Check out `src/gol/event.rs` and `src/sdl/loop.rs` for details.
 
-> *Don't forget to send `Cell(s)Flipped` events for every initially alive cells before processing any turns.*
+Send `TurnComplete` events at the end of each turn, **even if you are about to send `FinalTurnComplete`**.
+
+Send `CellFlipped` events whenever a cell changes from alive to dead or from dead to alive.
+
+> *Don't forget to send `CellFlipped` events for every initially alive cell before the first `StateChange` is sent.*
 >
-> *You can collect many flipped cells to a vector and send `CellsFlipped` at a time instead of sending `CellFlipped` for every flipped cell.
-> You can send many times of `CellsFlipped` event in a turn, i.e., each worker could send `CellsFlipped`.
-> Please be careful not to send `CellFlipped` and `CellsFlipped` at the same time, as they may conflict (flipped twice == not flipped).*
+> ***NOTE:** You can collect many flipped cells and send a `CellsFlipped` event with all of them instead of sending `CellFlipped` for every flipped cell.
+> You can send more than one `CellsFlipped` event in a turn, i.e., each worker could send `CellsFlipped`.
+> Be careful not to send both `CellFlipped` and `CellsFlipped` events for the same cell, or you will flip it twice*
 
 Also, implement the following control rules.
 Note that the running SDL provides you with a channel containing the relevant keypresses.
@@ -20,52 +24,35 @@ Note that the running SDL provides you with a channel containing the relevant ke
 - If `s` is pressed, save the current state of the board as a PGM image.
     > ***NOTE:** Don't forget to send an `ImageOutputComplete` event after a PGM image is saved.*
 - If `q` is pressed, stop executing Gol computation, save the current state of the board as a PGM image, then terminate the program.
-    > ***NOTE:** Your distributor should behave as following after `q` is pressed:
-    > \
-    > Complete current turn and send a `TurnComplete` event ->
-    > Send a `FinalTurnComplete` event ->
-    > Save the final state as PGM image and send an `ImageOutputComplete` event ->
-    > Send a `StateChange` event and terminate.*
+    > ***NOTE:** Your distributor should behave as following after `q` is pressed:*
+    >
+    > *Complete the current turn \
+    > Send a `FinalTurnComplete` event \
+    > Save the final state as PGM image and send an `ImageOutputComplete` event \
+    > Send a `StateChange` event and terminate*
 - If `p` is pressed, pause the processing and send a `StateChange` event.\
   If `p` is pressed again, resume the processing and send a `StateChange` event.
     > ***NOTE:**
     > It is **necessary** for `q` and `s` to work while the execution is paused.*
 
-::: details The `select!` macro
-You might need something similar to golang's `select` statement, the `select!` macro.
+### Select statement
 
-``` rust
-use tokio::select!;
-...
-loop {
-    select! { // Blocking until one of its branches is ready
-        event = channel_a.recv() => {
-            ... // May go to this branch if channel_a received event first
-            match event {
-                ... // Then do something with event
-            }
-        },
-        value = channel_b.recv() => {
-            ... // May go to this branch if channel_b received value first
-        },
-        result = async_task_that_can_be_awaited => {
-            ... // May go to this branch if this async task finished first
-        }
-    }
-}
-...
+- Tokio provides the
+[select!](https://tokio.rs/tokio/tutorial/select)
+macro that functions similar to golang's select statement in *async* context.
 
-```
+- Flume also provides a
+[Selector](https://docs.rs/flume/latest/flume/select/struct.Selector.html)
+type to implements select-like behaviour.
 
-:::
+### Test
 
-\
 To test the visualisation and control rules, type the following in the terminal.
 
 ::: code-group
 
 ``` bash [Test with SDL window]
-cargo test --release --test sdl -- sdl
+cargo test --release --test sdl -- --sdl
 ```
 
 ``` bash [Test without SDL window]

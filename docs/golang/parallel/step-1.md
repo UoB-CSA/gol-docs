@@ -36,7 +36,7 @@ Therefore, you only need to send the `FinalTurnComplete` event, with the list of
 
 ### Test
 
-To test your serial, single-threaded code, type the following in the terminal, all the tests ran should pass.
+To test your serial, single-threaded implementation, type the following in the terminal, all the tests ran should pass.
 
 ``` bash
 go test -v -run TestGol/-1$

@@ -8,7 +8,7 @@ You must report any change to your pairing to the unit director *before* startin
 
 It runs over 4 weeks (5 weeks including the reading week).
 ::: warning Note on deadline
-The deadline for submitting all your work is **30 November 13:00**
+The deadline for submitting all your work is **TBD**
 :::
 
 Talk to each other regularly and make sure you manage your team well.
@@ -21,7 +21,7 @@ Do not spend hours trying to debug on your own; use pair programming, seek help 
 
 Do not have one team member do just the parallel task and the other do just the distributed task. There is significant overlap between the two. If you work separately then both team members will have to solve the same problems separately.
 
-Similarly, do not have one team member do the programming tasks and the other just write the report. You need an in-depth understanding of the code to write a good report. 
+Similarly, do not have one team member do the programming tasks and the other just write the report. You need an in-depth understanding of the code to write a good report.
 
 ## Useful Links
 

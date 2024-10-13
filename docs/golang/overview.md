@@ -38,8 +38,12 @@ All parts of the skeleton are commented. All the code has been written in Go.
 
 You will not be required to write any C code. If you have any questions about the skeleton please ask a TA for help.
 
-::: warning Please note:
+::: warning Please note
 You **must not** modify any of the files ending in `_test.go`. We will be using these tests to judge the correctness of your implementation. We will undo any changes you make to them.
+:::
+
+::: warning For WSL2 users
+If you are using WSL2, ensure your skeleton is located within the WSL2 file system. Specifically, **your project should be located at `~/.../gol-skeleton`, NOT at `/mnt/.../gol-skeleton`**
 :::
 
 The skeleton code uses SDL.
@@ -74,7 +78,7 @@ There will be three separate submissions points on Blackboard - one for the repo
 - If you have multiple versions, only submit the ones you wish us to check for correctness (one zip for parallel and one for distributed). Other versions may be shared via OneDrive with Sion, Pui and Michael.
 :::
 
-::: warning Please note:
+::: warning Please note
 
 - Submitting different filenames or file formats (e.g. `.docx`, `.tex`, `.7z` or `.rar`) will result in a mark penalty.
 - **Each team member** has to upload an **identical copy** of the team's work.

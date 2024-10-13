@@ -6,7 +6,7 @@
 
 To install Rust on WSL2, Linux or macOS, type the following in the terminal, then follow the on-screen instructions to install Rust.
 
-```bash
+``` bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
@@ -14,7 +14,7 @@ Choose `Proceed with installation (default)`
 
 For WSL2 / Linux: You may also need to install compiler toolchain, type
 
-```bash
+``` bash
 sudo apt update
 sudo apt install build-essential
 ```
@@ -25,15 +25,15 @@ Type the following in the terminal to install SDL2.
 
 ::: code-group
 
-```bash [WSL2]
+``` bash [WSL2]
 sudo apt install libsdl2-dev
 ```
 
-```bash [Ubuntu]
+``` bash [Ubuntu]
 sudo apt install libsdl2-dev
 ```
 
-```bash [macOS]
+``` bash [macOS]
 brew install sdl2
 ```
 
@@ -41,26 +41,6 @@ brew install sdl2
 
 ::: tip For Lab machines
 SDL2 should already be installed and working on school's linux lab machines.
-
-**For WSL2 users**
-
-If you are using WSL2, ensure your skeleton is located within the WSL2 file system. Specifically, **your project should be located at `~/.../gol-rs-skeleton`, NOT at `/mnt/.../gol-rs-skeleton`**
-
-<!-- **For macOS**
-
-macOS users need to export library path from homebrew, add the following line to the end of `~/.zshrc`.
-(you can edit `~/.zshrc` by typing `nano ~/.zshrc` in the terminal)
-
-<div class="info custom-block" style="padding-top: 10px">
-export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
-</div>
-
-then type the following in the terminal
-
-``` bash
-source ~/.zshrc
-``` -->
-
 :::
 
 ::: details Only if you don't want to use WSL2 - setup on native Windows

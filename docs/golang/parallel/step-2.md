@@ -13,7 +13,9 @@ The number of worker threads you should create is specified in `gol.Params.Threa
 
 You are free to design your system as you see fit, however, we encourage you to primarily use channels.
 
-To test your code, type the following in the terminal.
+### Test
+
+To test your implementation, type the following in the terminal.
 You can use tracing to verify the correct number of workers was used this time.
 
 ``` bash

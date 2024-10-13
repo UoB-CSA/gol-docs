@@ -18,8 +18,19 @@ You must be able to run the local controller as a client on a local machine, and
 Start by implementing a basic controller which can tell the logic engine to evolve Game of Life for the number of turns specified in `Params.turns`.
 You can achieve this by implementing a single, blocking RPC call to process all requested turns.
 
+### Test
+
 To test your implementation, type the following in the terminal of your **local controller** (cd to the controller folder first).
 
-```bash
+``` bash
 cargo test --release --test gol -- --threads 1
 ```
+
+If you want to specify the server address, simply by adding `--server_addr "<server_ip>:<server_port>"`
+(127.0.0.1:8030 in this case)
+
+``` bash
+cargo test --release --test gol -- --threads 1 --server_addr "127.0.0.1:8030"
+```
+
+This applies to the later tests as well.

@@ -41,6 +41,7 @@ let io_channels = IoChannels {
 
 let distributor_channels = DistributorChannels {
     events: Some(events),
+    key_presses: Some(key_presses),
     io_command: Some(io_command_tx),
     io_idle: Some(io_idle_rx),
     io_filename: None, // Create me first // [!code highlight]
@@ -66,9 +67,15 @@ All events are defined in the file `src/gol/event.rs`.
 In this step, you will only be working with the unit test `gol_test.rs`.
 Therefore, you only need to send the `FinalTurnComplete` event.
 
+### MPMC channels
+
+In the skeleton, the [flume](https://github.com/zesterer/flume) channel is widely used.
+
+Flume is a multi-producer, multi-consumer (MPMC) channel that functions similarly to a Golang channel.
+
 ### Test
 
-To test your serial, single-threaded code, type the following in the terminal, all the tests ran should pass.
+To test your serial, single-threaded implementation, type the following in the terminal, all the tests ran should pass.
 
 ``` bash
 cargo test --release --test gol -- --threads 1

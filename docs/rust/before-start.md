@@ -13,8 +13,6 @@
   \
   This book is for Rust masters.
 
-<!-- ### About asynchronous programming and concurrency -->
-
 ## Benchmarking
 
 The cousework skeleton provides you a basic benchmark under `benches/bench.rs`.
