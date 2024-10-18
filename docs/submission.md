@@ -4,23 +4,17 @@
 
 - For the report, you must submit a single file called `report.pdf`.
 
-  **Report submission point will appear here later.**
-
   [**Report submission point**](https://www.ole.bris.ac.uk/webapps/assignment/uploadAssignment?content_id=_9225275_1&course_id=_260087_1&group_id=&mode=cpview)
 
 - For the parallel implementation, you must submit a single zip file called `parallel.zip`. It must contain all the code required to compile and run the program. Submit a complete copy of the skeleton, **not just the `gol` folder**.
-
-  **Parallel submission point will appear here later.**
 
   [**Parallel submission point**](https://www.ole.bris.ac.uk/webapps/assignment/uploadAssignment?content_id=_9229197_1&course_id=_260087_1&group_id=&mode=cpview)
 
 - For the distributed implementation, you must submit a single zip file called `distributed.zip`. It must contain all the code required to compile and run the program.
 
-  **Distributed submission point will appear here later.**
-
   [**Distributed submission point**](https://www.ole.bris.ac.uk/webapps/assignment/uploadAssignment?content_id=_9229199_1&course_id=_260087_1&group_id=&mode=cpview) 
 
-- If you have multiple versions, only submit the ones you wish us to check for correctness (one zip for parallel and one for distributed). Other versions may be shared via OneDrive with Sion, Pui and Michael.
+- If you have multiple versions, only submit the ones you wish us to check for correctness (one zip for parallel and one for distributed). Other versions may be shared via OneDrive with Sion, Michael and Jed.
 :::
 
 ::: warning Please notice
