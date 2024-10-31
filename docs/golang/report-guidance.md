@@ -55,9 +55,9 @@ provided in the task description as a starting point.
 
 ## Previous Student Examples
 
-- [Here is a partially complete report from last year](https://www.ole.bris.ac.uk/bbcswebdav/courses/COMS20008_2023_TB-1/CONTENT_2023/OTHER/g.pdf) that scored highly
+- [Here is a partially complete report from last year](https://uob.sharepoint.com/:f:/r/teams/UnitTeams-COMS20008-2024-25-TB-1-A/Class%20Materials/CONTENT_2024/OTHER/g.pdf) that scored highly
 
-- [Here is an outstanding report from 2018.](https://www.ole.bris.ac.uk/bbcswebdav/courses/COMS20008_2023_TB-1/CONTENT_2023/OTHER/e.pdf)
+- [Here is an outstanding report from 2018.](https://uob.sharepoint.com/:f:/r/teams/UnitTeams-COMS20008-2024-25-TB-1-A/Class%20Materials/CONTENT_2024/OTHER/e.pdf)
 Note that the unit was quite different then and had no distributed component, so the content is not completely relevant to this year. This report was done in Latex using a conference paper template.
 
 ## Example Benchmark Function
