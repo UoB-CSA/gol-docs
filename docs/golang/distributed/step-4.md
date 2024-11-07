@@ -25,8 +25,21 @@ If `p` is pressed again resume the processing and have the controller print `Con
     > It is **necessary** for `q` and `s` to work while the execution is paused.*
 
 ### Test
+To test the visualisation and control rules, type the following in the terminal of your **local controller**.
 
-To run the program and test the control rules manually, type the following in the terminal of your **local controller**.
+::: code-group
+
+``` bash [Test with SDL window]
+go test -v -run TestKeyboard -sdl
+```
+
+``` bash [Test without SDL window]
+go test -v -run TestKeyboard
+```
+
+:::
+
+You can also run the program and test the control rules manually by typing the following in the terminal of your **local controller**.
 
 ``` bash
 go run .
