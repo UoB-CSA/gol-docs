@@ -57,6 +57,11 @@ If you are using `Use this template`, please check `Include all branches` and sw
 
 ::: warning For WSL2 users
 If you are using WSL2, ensure your skeleton is located within the WSL2 file system. Specifically, **your project should be located at `~/.../gol-rs-skeleton`, NOT at `/mnt/.../gol-rs-skeleton`**
+
+\
+**For native Windows users**
+
+Don't forget to copy `SDL2.lib` and `SDL2.dll` to the root inside the `gol-rs-skeleton` folder.
 :::
 
 Open the skeleton with your IDE, the file structure should look like the following. If it doesn't, please make sure you have switched to the `distributed` branch!

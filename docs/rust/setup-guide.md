@@ -69,7 +69,7 @@ choose `SDL2-devel-2.x.x-VC.zip`.
     <div class="info custom-block" style="padding-top: 10px">
     C:\Users\{Your Username}\.rustup\toolchains\x86_64-pc-windows-msvc\lib\rustlib\x86_64-pc-windows-msvc\lib
     </div>
-- Copy `SDL2.dll` from
+- Copy `SDL2.lib` and `SDL2.dll` from
   <div class="info custom-block" style="padding-top: 10px">
     SDL2-devel-2.x.x-VC\SDL2-2.x.x\lib\x64\
     </div>
