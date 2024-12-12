@@ -25,6 +25,7 @@ If `p` is pressed again resume the processing and have the controller print `Con
     > It is **necessary** for `q` and `s` to work while the execution is paused.*
 
 ### Test
+
 To test the visualisation and control rules, type the following in the terminal of your **local controller**.
 
 ::: code-group

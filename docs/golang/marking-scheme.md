@@ -39,7 +39,5 @@ You need to submit a CONCISE (**strictly** max 6 pages) report which should cove
   - Explain and analyse the benchmark results obtained.
   - Analyse the important factors responsible for the virtues and limitations of your implementations.
 
-::: warning Note on cover page
 Make sure your team member’s names and user names appear on page 1 of the report.\
 **Do not include a cover page.**
-:::

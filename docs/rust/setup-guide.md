@@ -12,12 +12,15 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 Choose `Proceed with installation (default)`
 
-For WSL2 / Linux: You may also need to install compiler toolchain, type
+::: tip For WSL2 / Linux
+ You may also need to install compiler toolchain, type
 
 ``` bash
 sudo apt update
 sudo apt install build-essential
 ```
+
+:::
 
 ### 2. Install SDL2 Library
 
@@ -29,7 +32,7 @@ Type the following in the terminal to install SDL2.
 sudo apt install libsdl2-dev
 ```
 
-``` bash [Ubuntu]
+``` bash [Ubuntu / Debian]
 sudo apt install libsdl2-dev
 ```
 
