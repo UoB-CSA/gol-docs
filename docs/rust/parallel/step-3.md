@@ -119,6 +119,25 @@ and use `mutex.blocking_lock()` in *blocking* context.
     }
     ```
 
+### Run your implementation
+
+When running your implementation, you will get the average Game of Life iteration turns per second (Avg turns/s).
+
+You can use this data to evaluate your performance and compare it with your various implementations. However, we do not recommend directly using this data in your report.
+**We recommend using formal [benchmarking](../before-start.md#benchmarking) instead**, and don't forget to analyse your methods and results in your report.
+
+To run your implementation, type the following in the terminal.
+
+To stop the program, press CTRL+C **twice** in the terminal.
+
+``` bash
+cargo run --release -- --headless --threads 4
+```
+
+> The `--headless` argument disables the SDL visualiser for this run, as we haven't implemented it yet.
+>
+> The `--threads` argument stands for the number of threads passed to struct `Params` for this run; you can specify this number yourself.
+
 ### Test
 
 To test your implementation, type the following in the terminal.

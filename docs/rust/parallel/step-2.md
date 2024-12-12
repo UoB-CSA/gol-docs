@@ -26,6 +26,20 @@ If you use rayon, you can use
 to manually generate a fix-sized thread pool,
 allowing you to specify how many threads rayon should use.
 
+::: details Tips on improving the performance - worker pool
+Unlike the Median Filter in Lab 1, the Game of Life involves rapid, repeated iterations, which requires frequent thread creation and destruction.
+
+However, frequent creation and destruction of threads can incur significant overhead. Hence, our core approach is to reuse threads, avoiding recreation in each iteration.
+We can abstract the design of the worker pool into four components: distributor, workers (thread), tasks (input) and results (output).
+
+Workers are initialised ahead of computation and run continuously, processing tasks from the task channel and sending results back to the result channel.
+The distributor is responsible for assigning tasks to workers and collecting results for each iteration.
+
+It is important to manage the lifecycle of the workers properly; when the distributor exits, ensure the workers are gracefully terminated.
+
+It is recommended to back up your various implementations; this will be helpful for analysing how well you did in the later stages.
+:::
+
 ### Test
 
 To test your implementation, type the following in the terminal.
