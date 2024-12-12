@@ -1,7 +1,7 @@
 # Distributed Implementation
 
-<div class="warning custom-block" style="padding-top: 10px">
-<b>This guide is for the Rust version of the coursework, which is offered as an optional extension.</b>
+<div class="tip custom-block" style="padding-top: 10px">
+This guide is for the Rust extension of the coursework, which is optional.
 </div>
 
 In this stage, you are required to create an implementation that uses a number of

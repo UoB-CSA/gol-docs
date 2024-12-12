@@ -1,13 +1,10 @@
 # Rust Extension Overview
 
-::: warning Writing this coursework in Rust is an extension and is **OPTIONAL**
-
-You are ***NOT*** required to write any Rust code unless you intend to complete this coursework with Rust.
-
-This is an extension, which means **you should complete this coursework in Golang before considering the Rust extension**.
-
-Talk to the lecturers before you start working on this Rust extension.
-:::
+<div class="tip custom-block" style="padding-top: 10px">
+This is an extension, writing this coursework in Rust language is optional.
+<br/>
+<b>You should complete this coursework in Golang before considering this extension.</b>
+</div>
 
 ## Skeleton Code
 
