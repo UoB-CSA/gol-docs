@@ -15,7 +15,7 @@ Finally, the local controller should be able to manage the behaviour of the Gol 
     >*A new controller should be able to take over interaction with the Gol engine.\
     >Note that you are free to define the nature of how a new controller can take over interaction.
     >Most likely the state will be reset.\
-    >If you do manage to continue with the previous world this would be considered a form of [fault tolerance](/golang/extensions#fault-tolerance).*
+    >If you do manage to continue with the previous world this would be considered a form of [fault tolerance](/extensions#fault-tolerance).*
 
 - If `k` is pressed, all components of the distributed system are shut down cleanly, and the system outputs a PGM image of the latest state.
 

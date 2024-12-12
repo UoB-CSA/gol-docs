@@ -73,7 +73,7 @@ function golangDocs(): DefaultTheme.SidebarItem[] {
             { text: 'In Your Report', link: '/golang/distributed/in-your-report' },
           ]
         },
-        { text: 'Extensions', link: '/golang/extensions' },
+        { text: 'Extensions', link: '/extensions' },
 
         // Comment out the following code to hide rust extension
         // -------Starting from here-------
@@ -109,9 +109,10 @@ function golangDocs(): DefaultTheme.SidebarItem[] {
           ]
         },
         // -------End comment-------
-        { text: 'Report Guidance', link: '/golang/report-guidance' },
-        { text: 'Marking Scheme', link: '/golang/marking-scheme' },
-        { text: 'Viva', link: '/golang/viva' },
+        { text: 'Report Guidance', link: '/report-guidance' },
+        { text: 'Marking Scheme', link: '/marking-scheme' },
+        { text: 'Viva', link: '/viva' },
+        { text: 'Useful Links', link: '/useful-links' },
       ]
     },
   ]

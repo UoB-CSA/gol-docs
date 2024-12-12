@@ -16,14 +16,14 @@ The number of threads *cannot* be hardcoded but it may be the case that only som
 
 Additional marks are available for satisfying further success criteria, up to:
 
-70% - Satisfy *all* [success criteria](parallel/success-criteria) for this stage.
+70% - Satisfy *all* [success criteria](/golang/parallel/success-criteria) for this stage.
 
 ## Distributed Implementation (35 marks)
 
 40% - You must be able to demonstrate a distributed Game of Life implementation.
 It must be running a single AWS Gol Engine Node that is controlled by a locally running controller (see Step 1).
 
-70% - Satisfy *all* [success criteria](distributed/success-criteria) for this stage.
+70% - Satisfy *all* [success criteria](/golang/distributed/success-criteria) for this stage.
 
 ## Report (30 marks)
 

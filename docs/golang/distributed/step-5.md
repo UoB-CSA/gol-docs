@@ -13,4 +13,4 @@ while avoiding any errors in the collected board state.
 Try to design your solution so it takes advantage of the possible *scalability* of many worker machines.
 
 Make sure to keep the communication between nodes as efficient as possible.
-For example, consider a [halo exchange](/golang/extensions#halo-exchange) scheme where only the edges are communicated between the nodes.
+For example, consider a [halo exchange](/extensions#halo-exchange) scheme where only the edges are communicated between the nodes.
