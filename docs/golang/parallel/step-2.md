@@ -16,11 +16,12 @@ You are free to design your system as you see fit, however, we encourage you to 
 ::: details Tips on improving the performance - worker pool
 Unlike the Median Filter in Lab 1, the Game of Life involves rapid, repeated iterations, which requires frequent goroutine creation and destruction.
 
-While goroutines are lightweight, frequent creation and destruction can still incur significant overhead. Hence, our core approach is to reuse goroutines, avoiding recreation in each iteration.
-We can abstract the design of the worker pool into four components: distributor, workers (goroutine), tasks (input) and results (output).
+While goroutines are lightweight, frequent creation and destruction can still incur significant overhead. Hence, our core approach is to reuse goroutines, avoiding recreation in each iteration by implementing a simple worker pool.
+
+<!-- We can abstract the design of the worker pool into four components: distributor, workers (goroutine), tasks (input) and results (output).
 
 Workers are initialised ahead of computation and run continuously, processing tasks from the task channel and sending results back to the result channel.
-The distributor is responsible for assigning tasks to workers and collecting results for each iteration.
+The distributor is responsible for assigning tasks to workers and collecting results for each iteration. -->
 
 It is important to manage the lifecycle of the workers properly; when the distributor exits, ensure the workers are gracefully terminated.
 
@@ -33,5 +34,5 @@ To test your implementation, type the following in the terminal.
 You can use tracing to verify the correct number of workers was used this time.
 
 ``` bash
-go test -v -run TestGol
+go test ./tests -v -run TestGol
 ```

@@ -31,11 +31,11 @@ To test the visualisation and control rules, type the following in the terminal 
 ::: code-group
 
 ``` bash [Test with SDL window]
-go test -v -run TestKeyboard -sdl
+go test ./tests -v -run TestKeyboard -sdl
 ```
 
 ``` bash [Test without SDL window]
-go test -v -run TestKeyboard
+go test ./tests -v -run TestKeyboard
 ```
 
 :::

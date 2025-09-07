@@ -4,7 +4,7 @@
 ## Step 1
 
 Begin by ensuring you have a working single-threaded, single-machine implementation.
-You should be able to test your serial code using `go test -v -run TestGol/-1$` and all tests should pass.
+You should be able to test your serial code using `go test ./tests -v -run TestGol/-1$` and all tests should pass.
 
 ![Step 1](/assets/cw_diagrams-Distributed_1.png)
 
@@ -23,5 +23,5 @@ You can achieve this by implementing a single, blocking RPC call to process all 
 To test your implementation, type the following in the terminal of your **local controller**.
 
 ``` bash
-go test -v -run TestGol/-1$
+go test ./tests -v -run TestGol/-1$
 ```

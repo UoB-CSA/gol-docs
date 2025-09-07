@@ -35,7 +35,7 @@ go run . -headless -t 4
 To test your implementation, type the following in the terminal.
 
 ``` bash
-go test -v -run TestAlive
+go test ./tests -v -run TestAlive
 ```
 
 ### Troubleshooting

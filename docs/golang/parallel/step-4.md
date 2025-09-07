@@ -14,5 +14,5 @@ The output logic is very similar to the input logic from Step 1. Again, look at 
 To test your implementation, type the following in the terminal.
 
 ``` bash
-go test -v -run TestPgm
+go test ./tests -v -run TestPgm
 ```

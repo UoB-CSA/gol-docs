@@ -26,11 +26,11 @@ To test the visualisation and control rules, type the following in the terminal.
 ::: code-group
 
 ``` bash [Test with SDL window]
-go test -v -run TestSdl -sdl
+go test ./tests -v -run TestSdl -sdl
 ```
 
 ``` bash [Test without SDL window]
-go test -v -run TestSdl
+go test ./tests -v -run TestSdl
 ```
 
 :::
@@ -44,5 +44,5 @@ go run .
 Finally, type the following in the terminal to make sure all tests are passing with race detector.
 
 ``` bash
-go test -v -race
+go test ./tests -v -race
 ```

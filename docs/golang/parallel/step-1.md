@@ -37,7 +37,7 @@ Therefore, you only need to send the `FinalTurnComplete` event, with the list of
 ::: details Tips on improving the performance - counting neighbours
 We have provided you with a basic solution that uses modulo operations (%) to calculate the coordinates of neighbours, but it can still be further optimised because modulo usually takes more CPU cycles - they are slow.
 
-You need to optimise the calculation of neighboring coordinates manually and strive to minimise the use of modulo operations (%).
+<!-- You need to optimise the calculation of neighboring coordinates manually and strive to minimise the use of modulo operations (%). -->
 
 It is recommended to back up your various implementations; this will be helpful for analysing how well you did in the later stages.
 :::
@@ -47,7 +47,7 @@ It is recommended to back up your various implementations; this will be helpful 
 To test your serial, single-threaded implementation, type the following in the terminal, all the tests ran should pass.
 
 ``` bash
-go test -v -run TestGol/-1$
+go test ./tests -v -run TestGol/-1$
 ```
 
 ### Troubleshooting

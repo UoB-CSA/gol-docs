@@ -12,5 +12,5 @@ The local controller should be able to output the state of the board after all t
 To test your implementation, type the following in the terminal of your **local controller**.
 
 ``` bash
-go test -v -run TestPgm/-1$
+go test ./tests -v -run TestPgm/-1$
 ```
