@@ -54,5 +54,5 @@ To install the library follow the following instructions:
 - **Linux Lab Machines** - SDL should already be installed and working.
 - **Personal Ubuntu PCs** - `sudo apt install libsdl2-dev`
 - **MacOS** - Use [Homebrew](https://brew.sh/) `brew install sdl2` or use the official [`.dmg` installer](https://www.libsdl.org/download-2.0.php).
-- **Windows (deprecated, but useful) ** - Use Ubuntu with WSL2. See our [guide](https://github.com/UoB-CSA/setup-guides/blob/master/go-install/windows.md).
+- **Windows (deprecated, but useful)** - Use Ubuntu with WSL2. See our [guide](https://github.com/UoB-CSA/setup-guides/blob/master/go-install/windows.md).
 - **Other** - Consult the [official documentation](https://wiki.libsdl.org/Installation).
