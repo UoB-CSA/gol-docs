@@ -10,7 +10,7 @@ for specific configuration details, please refer to the VitePress [documentation
 > so you can edit Markdown and configuration files directly on GitHub — no need to clone the repository locally for editing.**
 
 ## Config
-
+ 
 To manage the website and sidebar config, edit `docs/.vitepress/config.mts`.
 
 For more info, please refer <https://vitepress.dev/reference/site-config>
