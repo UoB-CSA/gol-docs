@@ -9,7 +9,7 @@ Finally, the local controller should be able to manage the behaviour of the Gol 
 
 - If `s` is pressed, the controller should generate a PGM file with the current state of the board.
 
-- If `q` is pressed, close the controller client program without causing an error on the Gol server.
+- If `q` is pressed, close the controller client program without causing an error on the Gol server and the system outputs a PGM image of the latest state.
     >***NOTE:** Behaviour of new controller connected*
     >
     >*A new controller should be able to take over interaction with the Gol engine.\
