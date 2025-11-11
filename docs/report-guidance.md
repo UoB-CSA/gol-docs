@@ -1,7 +1,7 @@
 # Report Guidance
 
 Video Walkthrough of Report Component
-[Watch here](https://web.microsoftstream.com/video/b5e8cf95-981c-4c26-8522-cc0210293d51)
+[Watch here](https://uob-my.sharepoint.com/:v:/r/personal/sh1670_bristol_ac_uk/Documents/Stream%20Migrated%20Videos/COMS20008%20Summative%20Assignment%20(Game%20of%20Life)%20intro%20(report)-20211121_063706.mp4?csf=1&web=1&e=VaI73R&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D)
 
 ## Parallel Implementation report, more details
 
