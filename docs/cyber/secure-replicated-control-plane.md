@@ -2,7 +2,7 @@
 
 The distributed implementation currently relies on a central distributor or broker to coordinate workers. This creates a single point of failure: if that process becomes unavailable, the system may no longer be able to allocate work, track workers, or control execution.
 
-Replace the single coordinator with a small replicated control-plane cluster based on the **Raft consensus algorithm**. The cluster should maintain authoritative state for:
+Replace the single broker with a small replicated control-plane cluster based on the **Raft consensus algorithm**. The cluster should maintain authoritative state for:
 
 - the current control-plane leader;
 - registered worker nodes;
@@ -38,7 +38,7 @@ Conduct experiments to demonstrate the behaviour of your system under at least t
 - an attempted connection by an unauthorised node; and
 - stale or modified checkpoint metadata.
 
-Measure the performance overhead introduced by replication and the security controls. Compare the extended implementation with the original single-coordinator design. You may consider:
+Measure the performance overhead introduced by replication and the security controls. Compare the extended implementation with the original single-broker design. You may consider:
 
 - total execution time;
 - control-message traffic;
