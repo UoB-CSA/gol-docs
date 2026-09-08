@@ -57,3 +57,12 @@ Your solution must be free of deadlocks and race conditions.
 
 Analyse the performance of your new solution and compare it with your previous implementation.
 Explain any differences observed.
+
+## Secure and Fault-Tolerant Replicated Broker
+
+Explore how distributed systems remain secure and dependable during failure by replacing the single Game of Life broker with a replicated Raft broker. Implement leader election, failover, authenticated membership, protected control messages and checkpoint validation, then evaluate consistency, recovery, security and performance under controlled failure and attack scenarios on AWS nodes. Details are available [here.](cyber/secure-replicated-control-plane.md)
+
+## Secure CI/CD and Software Supply-Chain Assurance
+
+Explore how secure engineering practices protect the software delivery process by creating a CI/CD pipeline for the Game of Life implementation. Integrate automated testing, static analysis, dependency and secret scanning, provenance, software bills of materials and signed releases, then evaluate enforcement decisions, workflow usability, execution cost and residual supply-chain risks. Details are available [here.](cyber/secure-cicd-supply-chain.md)
+
