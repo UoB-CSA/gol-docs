@@ -26,6 +26,25 @@ Note that evolving such complex, deterministic systems is an important applicati
 
 Your task is to design and implement programs which simulate the Game of Life on an image matrix.
 
+## Use of AI
+
+AI is part of this coursework, and the rules differ between the two implementations.
+
+| Part | AI use |
+|---|---|
+| Parallel implementation | **Mandatory** |
+| Distributed implementation | **Permissible** (optional) |
+
+- Use the **University-provided Copilot** to generate code. Whenever you use AI to generate code for either part, this is the tool you should use.
+- For the **parallel** implementation you are required to use AI for code generation, and to keep a record of how you used it.
+- For the **distributed** implementation you may use AI in the same way, but you are not required to.
+- You must record every prompt you use, and submit those records in `ai-prompts.zip`. See [Submission](../submission#submission-folder-structure) for what to include and where it goes.
+
+::: warning Expect to work around limitations
+The University-provided Copilot does not accept every file type. In particular, you may find that it will not take **Go (`.go`) files** directly. Getting your code and the skeleton into a form it can work with is **part of the exercise**: you will need to experiment to find workarounds that suit you.
+Keep a note of any workaround alongside the prompts you recorded, so that it is clear what the model was given.
+:::
+
 ## Skeleton Code
 
 To help you along, you are given a simple skeleton project.
@@ -35,6 +54,8 @@ Starting by cloning [gol-skeleton](https://github.com/UoB-CSA/gol-skeleton) repo
 The skeleton includes tests and an SDL-based visualiser.
 
 All parts of the skeleton are commented. All the code has been written in Go.
+
+For an interactive picture of how the skeleton's goroutines and channels fit together (loading, saving, visualising, keyboard input, tickers), see the [skeleton visualiser](/gol-skeleton-visualiser.html).
 
 You will not be required to write any C code. If you have any questions about the skeleton please ask a TA for help.
 

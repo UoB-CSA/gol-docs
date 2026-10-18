@@ -1,7 +1,7 @@
 # UoB CSA Coursework: Game of Life
 
 This is the summative coursework for University of Bristol Computer Systems A unit,
-it is worth 80% of the unit mark.
+it is worth 70% of the unit mark.
 
 It is to be completed in your programming pairs.
 You must report any change to your pairing to the unit director *before* starting your coursework.

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Game of Life skeleton: goroutines and channels</title>
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+  --bg: #ffffff; --card: #f6f6f7; --fg: #1f2328; --muted: #656d76; --border: #d0d7de;
+  --provided: #1a7f37; --provided-soft: rgba(26,127,55,.12);
+  --todo: #cf222e; --todo-soft: rgba(207,34,46,.12);
+  --suggest: #0969da; --suggest-soft: rgba(9,105,218,.12);
+  --yours: #9a6700; --yours-soft: rgba(154,103,0,.14);
+  --accent: #0969da; --glow: rgba(9,105,218,.25);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d1117; --card: #161b22; --fg: #e6edf3; --muted: #8d96a0; --border: #30363d;
+    --provided: #3fb950; --provided-soft: rgba(63,185,80,.16);
+    --todo: #ff7b72; --todo-soft: rgba(255,123,114,.16);
+    --suggest: #58a6ff; --suggest-soft: rgba(88,166,255,.16);
+    --yours: #d29922; --yours-soft: rgba(210,153,34,.18);
+    --accent: #58a6ff; --glow: rgba(88,166,255,.3);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1117; --card: #161b22; --fg: #e6edf3; --muted: #8d96a0; --border: #30363d;
+  --provided: #3fb950; --provided-soft: rgba(63,185,80,.16);
+  --todo: #ff7b72; --todo-soft: rgba(255,123,114,.16);
+  --suggest: #58a6ff; --suggest-soft: rgba(88,166,255,.16);
+  --yours: #d29922; --yours-soft: rgba(210,153,34,.18);
+  --accent: #58a6ff; --glow: rgba(88,166,255,.3);
+}
+html, body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+*, *::before, *::after { box-sizing: border-box; }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 16px 16px 40px; }
+h1 { font-size: 1.35rem; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; margin: 8px 0 12px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 22px; height: 0; border-top: 3px solid; display: inline-block; }
+.sw.provided { border-color: var(--provided); }
+.sw.todo { border-color: var(--todo); border-top-style: dashed; }
+.sw.yours { border-color: var(--yours); border-top-style: dashed; }
+.sw.suggest { border-color: var(--suggest); border-top-style: dashed; }
+.bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; }
+.bar label { font-size: .85rem; display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+.bar .sep { width: 1px; height: 22px; background: var(--border); }
+button, select { font: inherit; font-size: .85rem; background: var(--bg); color: var(--fg); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--accent); color: #fff; border-color: transparent; }
+button.key { min-width: 38px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; align-items: start; }
+@media (max-width: 980px) { .main { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.card h3 { margin: 0 0 6px; font-size: .95rem; }
+.diagram { padding: 6px; overflow-x: auto; }
+svg#dia { width: 100%; min-width: 760px; height: auto; display: block; font-family: inherit; }
+.node rect.box { fill: var(--bg); stroke-width: 2; rx: 10; transition: fill .2s, stroke-width .2s; }
+.node.provided rect.box { stroke: var(--provided); }
+.node.yours rect.box { stroke: var(--yours); }
+.node.suggest rect.box { stroke: var(--suggest); stroke-dasharray: 6 4; }
+.node.os rect.box { stroke: var(--muted); stroke-dasharray: 2 4; }
+.node.active rect.box { stroke-width: 4; filter: drop-shadow(0 0 6px var(--glow)); }
+.node.provided.active rect.box { fill: var(--provided-soft); }
+.node.yours.active rect.box { fill: var(--yours-soft); }
+.node.suggest.active rect.box { fill: var(--suggest-soft); }
+.node.blocked rect.box { stroke: var(--todo); fill: var(--todo-soft); }
+.node text { fill: var(--fg); pointer-events: none; }
+.node .ttl { font-weight: 700; font-size: 15.5px; }
+.node .ln { font-size: 13px; fill: var(--muted); }
+.node .st { font-size: 13px; font-weight: 600; fill: var(--accent); }
+.node { cursor: pointer; }
+.chan { cursor: pointer; }
+.chan path.line { fill: none; stroke-width: 3; marker-end: url(#arrow); }
+.chan.provided path.line { stroke: var(--provided); }
+.chan.suggest path.line { stroke: var(--suggest); stroke-dasharray: 7 5; }
+.chan.todo path.line { stroke: var(--yours); stroke-dasharray: 7 5; }
+.skeleton .chan.todo path.line { stroke: var(--todo); }
+.chan path.hit { fill: none; stroke: transparent; stroke-width: 16; }
+.chan text.lab { font-size: 13px; font-weight: 600; fill: var(--fg); text-anchor: middle; }
+.chan text.nil { font-size: 11.5px; fill: var(--todo); text-anchor: middle; font-weight: 700; display: none; }
+.skeleton .chan.todo text.nil { display: block; }
+.chan.sel path.line { stroke-width: 5; }
+.chan.stuck path.line { stroke: var(--todo); animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: .35; } }
+.gauge rect.bg { fill: var(--border); }
+.gauge rect.fg { fill: var(--accent); }
+.gauge text { font-size: 11px; fill: var(--muted); text-anchor: middle; }
+.pkt rect { rx: 6; stroke-width: 1.5; }
+.pkt text { font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.mini { font-size: 12.5px; fill: var(--muted); }
+.side { display: flex; flex-direction: column; gap: 10px; }
+#caption { min-height: 4.5em; }
+#caption b { color: var(--accent); }
+.info dl { margin: 0; font-size: .85rem; display: grid; grid-template-columns: 82px 1fr; gap: 3px 8px; }
+.info dt { color: var(--muted); }
+.info dd { margin: 0; }
+.badge { display: inline-block; font-size: .72rem; padding: 0 8px; border-radius: 999px; border: 1px solid var(--border); }
+.badge.provided { color: var(--provided); border-color: var(--provided); background: var(--provided-soft); }
+.badge.todo { color: var(--todo); border-color: var(--todo); background: var(--todo-soft); }
+.badge.yours { color: var(--yours); border-color: var(--yours); background: var(--yours-soft); }
+.badge.suggest { color: var(--suggest); border-color: var(--suggest); background: var(--suggest-soft); }
+.lower { display: grid; grid-template-columns: 300px minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-top: 12px; }
+@media (max-width: 980px) { .lower { grid-template-columns: 1fr; } }
+canvas { width: 256px; height: 256px; image-rendering: pixelated; background: #000; border: 1px solid var(--border); display: block; }
+.winbar { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); margin-top: 4px; }
+.dirty { color: var(--yours); font-weight: 700; }
+.log { font: 11.5px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; max-height: 260px; overflow: auto; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; }
+.log div { white-space: pre-wrap; border-bottom: 1px dotted var(--border); padding: 1px 0; }
+.log .dim { color: var(--muted); }
+details { margin-top: 12px; }
+details summary { cursor: pointer; font-weight: 600; }
+details ul { margin: 6px 0 0; padding-left: 20px; font-size: .9rem; }
+.hint { font-size: .85rem; color: var(--muted); margin: 6px 0 0; }
+kbd { font: 700 .8rem ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--bg); }
+.arm { color: var(--yours); font-size: .8rem; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Game of Life skeleton: how the goroutines and channels fit together</h1>
+<p class="sub">An animated model of the provided skeleton and one common way of filling its gaps. Messages travel along channels; click any box or channel to inspect it. It is a teaching model, not your solution, and your own design may differ.</p>
+
+<div class="legend">
+  <span><i class="sw provided"></i> provided and already wired</span>
+  <span><i class="sw yours"></i> declared but <b>nil</b> in the skeleton: you create it</span>
+  <span><i class="sw suggest"></i> suggested addition (your design)</span>
+  <span><i class="sw" style="border-color:var(--yours)"></i> the distributor body: you write it</span>
+</div>
+
+<div class="bar" id="bar1">
+  <button class="primary" id="btnStart">▶ Start</button>
+  <button id="btnSimPause" disabled>⏸ Freeze</button>
+  <button id="btnNext" disabled>Next message ›</button>
+  <span class="sep"></span>
+  <label>Mode <select id="mode"><option value="live">Live</option><option value="step">Step through</option></select></label>
+  <label>Speed <select id="speed"><option value="900">Slow</option><option value="450" selected>Normal</option><option value="180">Fast</option><option value="50">Turbo</option></select></label>
+  <label>Turns <select id="turns"><option value="5">5</option><option value="20" selected>20</option><option value="100">100</option><option value="0">unlimited</option></select></label>
+</div>
+<div class="bar" id="bar2">
+  <strong style="font-size:.85rem">Press a key in the SDL window:</strong>
+  <button class="key" data-k="p" title="pause / resume">P</button>
+  <button class="key" data-k="s" title="save current state as PGM">S</button>
+  <button class="key" data-k="q" title="quit">Q</button>
+  <button class="key" data-k="k" title="forwarded by SDL; used by the distributed part">K</button>
+  <button id="btnCtrlC">Ctrl+C in terminal</button><span class="arm" id="arm"></span>
+  <span class="sep"></span>
+  <label><input type="checkbox" id="optSkel"> skeleton exactly as provided (the three io channels are nil)</label>
+  <label><input type="checkbox" id="optPerCell"> send one CellFlipped per cell (instead of one CellsFlipped batch)</label>
+  <label><input type="checkbox" id="optBlock"> SDL stops reading events</label>
+  <label><input type="checkbox" id="optTick" checked> automatic 2 s ticker</label>
+  <button id="btnTick">Fire ticker now</button>
+</div>
+
+<div class="main">
+  <div class="card diagram">
+    <svg id="dia" viewBox="0 0 1100 640" role="img" aria-label="Goroutines and channels in the Game of Life skeleton">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+      </defs>
+      <g id="layerNodes"></g><g id="layerChans"></g><g id="layerPkts"></g>
+    </svg>
+  </div>
+  <div class="side">
+    <div class="card"><h3>What is happening</h3><div id="caption">Press <b>Start</b>. The model begins at <code>main()</code> and follows the program: start-up, loading the image, evolving turns, the 2 s ticker, key presses, saving, and shutting down.</div></div>
+    <div class="card info"><h3>Inspector</h3><div id="info"><p class="hint" style="margin:0">Click a goroutine or a channel in the diagram.</p></div></div>
+  </div>
+</div>
+
+<div class="lower">
+  <div class="card">
+    <h3>The SDL window</h3>
+    <canvas id="win" width="64" height="64"></canvas>
+    <div class="winbar"><span id="frames">frames drawn: 0</span><span id="dirtyflag">dirty: false</span></div>
+    <p class="hint">The window only changes when a frame is drawn: on a 60 FPS tick, and only if a <code>TurnComplete</code> event has set <em>dirty</em>. Flips alone change a hidden pixel buffer.</p>
+  </div>
+  <div class="card"><h3>Console (what the skeleton logs)</h3><div class="log" id="console"></div></div>
+  <div class="card"><h3>Message log</h3><div class="log" id="msglog"></div></div>
+</div>
+
+<details class="card">
+  <summary>Things the skeleton warns about (and why)</summary>
+  <ul>
+    <li>A <b>nil channel</b> blocks forever on send or receive. In the skeleton, <code>ioFilename</code>, <code>ioOutput</code> and <code>ioInput</code> are nil: tick “skeleton exactly as provided” and start the model to see what that does.</li>
+    <li><code>ioCommand</code>, <code>ioIdle</code> (and the three nil ones once you create them) are <b>unbuffered</b>: a send completes only when the other goroutine receives. The IO goroutine and the distributor must agree on the order of messages.</li>
+    <li>Send every <code>CellFlipped</code> or <code>CellsFlipped</code> for a turn <b>before</b> <code>TurnComplete</code>, which is what makes SDL draw a frame. Never send both kinds for the same cell, or it flips twice.</li>
+    <li>Before exiting, the distributor asks the IO goroutine whether it is idle (<code>ioCheckIdle</code>), so a PGM write is not cut short.</li>
+    <li><code>close(events)</code> is how SDL learns to stop. Removing it may deadlock the program, as the skeleton comment says.</li>
+    <li><code>events</code> has a buffer of 1000. If the reader stops, the buffer fills and the sender blocks, which is more likely if you send one event per flipped cell.</li>
+    <li>SDL reads <b>one</b> keyboard event per frame and sends it on <code>keyPresses</code> (buffer 10); your distributor must keep receiving from it, including while paused.</li>
+  </ul>
+</details>
+</div>
+
+<script>
+'use strict';
+/* ================= configuration ================= */
+const W = 64, H = 64, THREADS = 4, EVT_CAP = 1000, KEY_CAP = 10;
+const IMG = W + 'x' + H;
+
+/* ================= static description of the diagram ================= */
+const NODES = [
+  { id: 'os', x: 10, y: 8, w: 230, h: 44, cls: 'os', title: 'OS: keyboard, window', lines: [] },
+  { id: 'main', x: 10, y: 80, w: 230, h: 300, cls: 'provided', title: 'main goroutine', lines: ['main() locks the OS thread,', 'then runs sdl.Run', '', 'every 1/60 s (ticker):', '• poll ONE event → keyPresses', '• if dirty → RenderFrame', '', 'on events:', '• flips → pixel buffer', '• TurnComplete → dirty', '• Quitting → leave loop'] },
+  { id: 'dist', x: 410, y: 62, w: 270, h: 350, cls: 'yours', title: 'gol.Run → distributor()', lines: ['Shell provided; body is yours', '(the TODOs).', '', 'Owns the world, runs turns,', 'talks to IO, sends events,', 'receives key presses.', '', 'A common shape: a loop that', 'selects on keyPresses and a', 'ticker, else runs a turn.'] },
+  { id: 'io', x: 850, y: 80, w: 240, h: 250, cls: 'provided', title: 'IO goroutine: startIo', lines: ['Started by gol.Run.', 'Loops on ioCommand.', '', 'ioInput → readPgmImage', '(reads images/NAME.pgm)', 'ioOutput → writePgmImage', '(writes out/NAME.pgm)', 'ioCheckIdle → send idle'] },
+  { id: 'tick', x: 470, y: 8, w: 150, h: 34, cls: 'suggest', title: 'time.Ticker 2 s', lines: [] },
+  { id: 'sig', x: 10, y: 450, w: 230, h: 126, cls: 'provided', title: 'sigint goroutine', lines: ['Started by main().', 'Waits for SIGINT / SIGTERM.', '1st Ctrl+C warns; a 2nd within', '4 s calls os.Exit(0).'] }
+];
+for (let i = 0; i < THREADS; i++) NODES.push({ id: 'w' + i, x: 330 + i * 120, y: 520, w: 108, h: 62, cls: 'suggest', title: 'worker ' + i, lines: ['strip ' + (i + 1) + ' of ' + THREADS] });
+
+// channels: id, path (drawn in the direction of the send), label position, status
+const CHANS = [
+  { id: 'events', d: 'M410,130 L240,130', lx: 325, ly: 120, label: 'events', cls: 'provided', gauge: 'evt', gx: 325, gy: 138 },
+  { id: 'keys', d: 'M240,250 L410,250', lx: 325, ly: 240, label: 'keyPresses', cls: 'provided', gauge: 'key', gx: 325, gy: 258 },
+  { id: 'ioCommand', d: 'M680,110 L850,110', lx: 765, ly: 102, label: 'ioCommand', cls: 'provided' },
+  { id: 'ioFilename', d: 'M680,160 L850,160', lx: 765, ly: 152, label: 'ioFilename', cls: 'todo' },
+  { id: 'ioOutput', d: 'M680,210 L850,210', lx: 765, ly: 202, label: 'ioOutput', cls: 'todo' },
+  { id: 'ioInput', d: 'M850,260 L680,260', lx: 765, ly: 252, label: 'ioInput', cls: 'todo' },
+  { id: 'ioIdle', d: 'M850,305 L680,305', lx: 765, ly: 297, label: 'ioIdle', cls: 'provided' },
+  { id: 'tickC', d: 'M545,42 L545,62', lx: 545, ly: 56, label: '', cls: 'suggest' },
+  { id: 'osKey', d: 'M125,52 L125,80', lx: 125, ly: 70, label: '', cls: 'suggest' }
+];
+for (let i = 0; i < THREADS; i++) {
+  const ax = 450 + i * 60, cx = 384 + i * 120;
+  CHANS.push({ id: 'task' + i, d: `M${ax - 6},412 L${cx - 10},520`, lx: 0, ly: 0, label: '', cls: 'suggest' });
+  CHANS.push({ id: 'res' + i, d: `M${cx + 10},520 L${ax + 6},412`, lx: 0, ly: 0, label: '', cls: 'suggest' });
+}
+
+const INFO = {
+  main: { n: 'main goroutine (sdl.Run)', s: 'provided', t: 'Runs on the program’s main OS thread (runtime.LockOSThread). It owns the window and is the only reader of events.', r: 'Creates both channels, starts the sigint goroutine and gol.Run, then runs the SDL loop. Sends key presses on keyPresses; stops when events is closed or a Quitting StateChange arrives.' },
+  dist: { n: 'gol.Run goroutine → distributor()', s: 'yours', t: 'gol.Run builds the io channels, starts the IO goroutine with “go startIo”, then calls distributor in the same goroutine.', r: 'You write the body. It must: load the image, evolve the turns with workers, send the events SDL needs, react to key presses and the ticker, save PGMs, and shut down cleanly (including close(events)).' },
+  io: { n: 'IO goroutine (startIo)', s: 'provided', t: 'Provided. Receives an ioCommand, then (for input and output) asks for a filename and streams bytes.', r: 'ioInput: receive filename, read images/NAME.pgm, send every byte on input. ioOutput: receive filename, receive W×H bytes on output, write out/NAME.pgm. ioCheckIdle: send true on idle. Blocks while waiting for the distributor.' },
+  tick: { n: 'time.Ticker (2 s)', s: 'suggest', t: 'Not provided. The brief asks for an AliveCellsCount event every 2 seconds.', r: 'A time.Ticker gives you a channel (ticker.C). One common design selects on it in the distributor. SDL does the same thing with its own 60 FPS ticker. You must make sure the count you report matches the turn you report.' },
+  sig: { n: 'sigint goroutine', s: 'provided', t: 'Provided in main.go. Independent of the game.', r: 'On SIGINT/SIGTERM prints a warning and arms a 4 s window. A second signal inside that window calls os.Exit(0) immediately, without any clean shutdown.' },
+  os: { n: 'OS: keyboard and window', s: 'provided', t: 'Not a goroutine you control. SDL receives keyboard and close-window events here.', r: 'The SDL event filter only keeps KEYDOWN and QUIT. The main goroutine polls one event per frame and translates: Esc/Q/window close → q, P → p, S → s, K → k.' },
+  events: { n: 'events', s: 'provided', ty: 'chan Event (buffered, 1000)', d: 'distributor → main (SDL)', c: 'main.go', r: 'The only way the distributor reports to the outside: state changes, flipped cells, turn completion, alive counts, output done, final state. Tests read it too. It must be closed by the distributor when the game ends.', b: 'Send blocks only if 1000 events are already waiting.' },
+  keys: { n: 'keyPresses', s: 'provided', ty: 'chan rune (buffered, 10)', d: 'main (SDL) → distributor', c: 'main.go', r: 'Carries p, s, q and k. Tests send on it directly. In some tests it is nil, so a receive on it must never be your only way to make progress.', b: 'Sender blocks if 10 key presses are already waiting.' },
+  ioCommand: { n: 'ioCommand', s: 'provided', ty: 'chan ioCommand (unbuffered)', d: 'distributor → IO', c: 'gol.Run', r: 'Values: ioInput, ioOutput, ioCheckIdle. Starts every IO operation.', b: 'Unbuffered: the send completes when the IO goroutine receives.' },
+  ioIdle: { n: 'ioIdle', s: 'provided', ty: 'chan bool (unbuffered)', d: 'IO → distributor', c: 'gol.Run', r: 'The IO goroutine answers ioCheckIdle with true. Because the IO goroutine handles one command at a time, receiving it proves earlier writes have finished.', b: 'Unbuffered: IO blocks until the distributor receives.' },
+  ioFilename: { n: 'ioFilename', s: 'todo', ty: 'chan string', d: 'distributor → IO', c: 'you: in gol.Run', r: 'Declared in both structs but set to nil. After an ioInput or ioOutput command the IO goroutine waits for a name here. Input names look like “' + IMG + '”; output names like “' + IMG + 'x100” (width, height, completed turns).', b: 'Nil in the skeleton: both sides block forever.' },
+  ioOutput: { n: 'ioOutput', s: 'todo', ty: 'chan uint8', d: 'distributor → IO', c: 'you: in gol.Run', r: 'After the filename, the distributor sends every cell as one byte (255 alive, 0 dead), row by row. The IO goroutine receives exactly W×H bytes, then writes the file.', b: 'Nil in the skeleton. Once made, sending the wrong number of bytes leaves the IO goroutine stuck.' },
+  ioInput: { n: 'ioInput', s: 'todo', ty: 'chan uint8', d: 'IO → distributor', c: 'you: in gol.Run', r: 'After receiving the filename, the IO goroutine sends every byte of the image on this channel, row by row. The distributor must receive exactly W×H bytes.', b: 'Nil in the skeleton. Once made, the IO goroutine blocks until you read every byte.' },
+  tickC: { n: 'ticker.C', s: 'suggest', ty: '<-chan time.Time', d: 'ticker → distributor', c: 'you', r: 'The channel of the time.Ticker.', b: 'A ticker drops ticks if nobody is listening.' },
+  osKey: { n: 'keyboard → SDL queue', s: 'suggest', ty: 'SDL event queue', d: 'OS → main', c: 'SDL', r: 'Not a Go channel. SDL queues keyboard and quit events; the main goroutine polls one per frame.', b: '' }
+};
+for (let i = 0; i < THREADS; i++) {
+  INFO['w' + i] = { n: 'worker ' + i, s: 'suggest', t: 'Not provided: Params.Threads workers, each with a horizontal strip.', r: 'How workers get their strip, how they report results and how long they live are all your design decisions. This model uses long-lived workers with a task channel and a result channel each.' };
+  INFO['task' + i] = { n: 'worker ' + i + ' input', s: 'suggest', ty: 'your design', d: 'distributor → worker ' + i, c: 'you', r: 'What a worker needs each turn: access to the previous world and its rows.', b: 'Depends on your design.' };
+  INFO['res' + i] = { n: 'worker ' + i + ' output', s: 'suggest', ty: 'your design', d: 'worker ' + i + ' → distributor', c: 'you', r: 'What the worker returns: for example the new strip, or the cells that flipped.', b: 'Depends on your design.' };
+}
+
+/* ================= build the SVG ================= */
+const NS = 'http://www.w3.org/2000/svg';
+function el(name, attrs, parent) { const e = document.createElementNS(NS, name); for (const k in (attrs || {})) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+const layerNodes = document.getElementById('layerNodes'), layerChans = document.getElementById('layerChans'), layerPkts = document.getElementById('layerPkts');
+const nodeEls = {}, chanEls = {}, pathEls = {}, statEls = {}, gauges = {};
+
+for (const n of NODES) {
+  const g = el('g', { class: 'node ' + n.cls, 'data-id': n.id }, layerNodes);
+  el('rect', { class: 'box', x: n.x, y: n.y, width: n.w, height: n.h }, g);
+  const small = n.id.startsWith('w') && n.id.length === 2;
+  const ttl = el('text', { class: 'ttl', x: n.x + (small ? n.w / 2 : 12), y: n.y + (n.lines.length || small ? 22 : n.h / 2 + 5), 'text-anchor': small ? 'middle' : 'start' }, g);
+  ttl.textContent = n.title;
+  n.lines.forEach((t, i) => { const l = el('text', { class: 'ln', x: n.x + 12, y: n.y + 44 + i * 17 }, g); l.textContent = t; if (small) { l.setAttribute('x', n.x + n.w / 2); l.setAttribute('text-anchor', 'middle'); l.setAttribute('y', n.y + 40); } });
+  const st = el('text', { class: 'st', x: n.x + (small ? n.w / 2 : 12), y: n.y + n.h - 10, 'text-anchor': small ? 'middle' : 'start' }, g);
+  statEls[n.id] = st; nodeEls[n.id] = g;
+  g.addEventListener('click', () => inspect(n.id));
+}
+for (const c of CHANS) {
+  const g = el('g', { class: 'chan ' + c.cls, 'data-id': c.id }, layerChans);
+  const p = el('path', { class: 'line', d: c.d }, g);
+  el('path', { class: 'hit', d: c.d }, g);
+  if (c.label) { const t = el('text', { class: 'lab', x: c.lx, y: c.ly }, g); t.textContent = c.label; const nl = el('text', { class: 'nil', x: c.lx, y: c.ly + 11 }, g); nl.textContent = 'nil in skeleton'; }
+  if (c.gauge) {
+    const gg = el('g', { class: 'gauge' }, g);
+    el('rect', { class: 'bg', x: c.gx - 55, y: c.gy, width: 110, height: 6, rx: 3 }, gg);
+    const fg = el('rect', { class: 'fg', x: c.gx - 55, y: c.gy, width: 0, height: 6, rx: 3 }, gg);
+    const tx = el('text', { x: c.gx, y: c.gy + 17 }, gg);
+    gauges[c.gauge] = { fg, tx, cap: c.gauge === 'evt' ? EVT_CAP : KEY_CAP };
+  }
+  chanEls[c.id] = g; pathEls[c.id] = p;
+  g.addEventListener('click', () => inspect(c.id));
+}
+const mini1 = el('text', { class: 'mini', x: 545, y: 612, 'text-anchor': 'middle' }, layerNodes); mini1.textContent = 'Worker goroutines: Params.Threads of them. Tasks out, results back. All of this is your design.';
+
+/* ================= state ================= */
+let runId = 0, cancelFn = null, cancelled = null;
+let simFrozen = false, nextResolve = null;
+const S = {};
+function resetState() {
+  Object.assign(S, {
+    turn: 0, paused: false, quitReq: false, tickPending: false, sdlClosed: false, exited: false, started: false,
+    keyBuf: [], evtBuf: 0, sdlQueue: [], dirty: false, frames: 0, armedUntil: 0, totalEvents: 0,
+    world: null, pixels: new Uint8Array(W * H), stuck: null, blockedNodes: new Set(), done: false, running: false, keyBusy: false
+  });
+}
+resetState();
+
+const $ = (id) => document.getElementById(id);
+const cfg = () => ({ mode: $('mode').value, hop: +$('speed').value, turns: +$('turns').value || Infinity, skel: $('optSkel').checked, perCell: $('optPerCell').checked, block: $('optBlock').checked, auto: $('optTick').checked });
+
+/* ================= helpers: time, gating, cancellation ================= */
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function check(id) { if (id !== runId) throw new Error('cancelled'); }
+async function gate(id) {
+  check(id);
+  if (cfg().mode === 'step') {
+    $('btnNext').disabled = false;
+    await Promise.race([new Promise((r) => { nextResolve = r; }), cancelled]);
+    $('btnNext').disabled = true;
+  }
+  while (simFrozen) { await sleep(60); check(id); }
+  check(id);
+}
+function forever(id) { return cancelled; }
+
+function setCaption(html) { $('caption').innerHTML = html; }
+function pulse(id, ms) { const n = nodeEls[id]; if (!n) return; n.classList.add('active'); setTimeout(() => n.classList.remove('active'), ms || 500); }
+function setStatus(id, text) { if (statEls[id]) statEls[id].textContent = text; }
+function logConsole(txt) { const d = document.createElement('div'); d.textContent = txt; const c = $('console'); c.appendChild(d); c.scrollTop = c.scrollHeight; if (c.children.length > 200) c.removeChild(c.firstChild); }
+function logMsg(from, to, chan, payload) {
+  const d = document.createElement('div'); d.textContent = `${from} → ${to}  ${chan}  ${payload}`;
+  const m = $('msglog'); m.insertBefore(d, m.firstChild); while (m.children.length > 120) m.removeChild(m.lastChild);
+}
+function updateGauges() {
+  const e = gauges.evt, k = gauges.key;
+  e.fg.setAttribute('width', 110 * Math.min(1, S.evtBuf / e.cap)); e.tx.textContent = `buffered ${S.evtBuf} / ${e.cap}`;
+  k.fg.setAttribute('width', 110 * Math.min(1, S.keyBuf.length / k.cap)); k.tx.textContent = `buffered ${S.keyBuf.length} / ${k.cap}`;
+}
+
+/* ================= packet animation ================= */
+const COLORS = { state: '#8250df', flip: '#1a7f37', turn: '#0969da', count: '#bf8700', done: '#cf222e', key: '#bc4c00', cmd: '#0969da', name: '#6e7781', byte: '#1a7f37', work: '#0969da', idle: '#6e7781', close: '#cf222e' };
+function packet(chan, label, color, ms) {
+  return new Promise((resolve) => {
+    const path = pathEls[chan]; const L = path.getTotalLength();
+    const g = el('g', { class: 'pkt' }, layerPkts);
+    const wdt = Math.max(24, label.length * 6.4 + 12);
+    el('rect', { x: -wdt / 2, y: -9, width: wdt, height: 18, fill: 'var(--bg)', stroke: color }, g);
+    const t = el('text', { fill: color }, g); t.textContent = label;
+    const t0 = performance.now();
+    (function frame(now) {
+      const k = Math.min(1, (now - t0) / ms); const p = path.getPointAtLength(k * L);
+      g.setAttribute('transform', `translate(${p.x},${p.y})`);
+      if (k < 1) requestAnimationFrame(frame); else { g.remove(); resolve(); }
+    })(t0);
+  });
+}
+// a burst of little byte-sized dots for streams of uint8 (or many tiny events)
+function burst(chan, color, ms, label) {
+  const dots = []; const n = 12;
+  for (let i = 0; i < n; i++) dots.push(sleep(i * ms / 14).then(() => packet(chan, '', color, ms * 0.7)));
+  dots.push(packet(chan, label, color, ms));
+  return Promise.all(dots);
+}
+
+/* ================= SDL side (main goroutine) ================= */
+function sdlHandle(ev) {
+  switch (ev.t) {
+    case 'flips': for (const i of ev.cells) S.pixels[i] ^= 1; break;
+    case 'turn': S.dirty = true; break;
+    case 'count': logConsole(`[Event] Completed Turns ${String(ev.turn).padEnd(8)} Alive Cells ${ev.n}`); break;
+    case 'state': logConsole(`[Event] Completed Turns ${String(ev.turn).padEnd(8)} ${ev.s}`); if (ev.s === 'Quitting') { /* loop exits when it sees this */ } break;
+    case 'final': logConsole(`[Event] Completed Turns ${String(ev.turn).padEnd(8)} Final Turn Complete`); break;
+    case 'out': logConsole(`[Event] Completed Turns ${String(ev.turn).padEnd(8)} File ${ev.name}.pgm output done`); break;
+    case 'close': closeWindow(); break;
+  }
+}
+function closeWindow() { S.sdlClosed = true; setStatus('main', 'window destroyed'); drawWindow(); }
+function drawWindow() {
+  const cv = $('win'), ctx = cv.getContext('2d'); const img = ctx.createImageData(W, H);
+  for (let i = 0; i < W * H; i++) { const v = S.pixels[i] ? 255 : 0; img.data[i * 4] = v; img.data[i * 4 + 1] = v; img.data[i * 4 + 2] = v; img.data[i * 4 + 3] = 255; }
+  ctx.putImageData(img, 0, 0);
+  if (S.sdlClosed) { ctx.fillStyle = 'rgba(0,0,0,.65)'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#fff'; ctx.font = '5px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('window closed', W / 2, H / 2); }
+}
+let sdlLoopHandle = null;
+function startSdlLoop(id) {
+  const tick = async () => {
+    if (id !== runId || S.sdlClosed || S.exited) return;
+    sdlLoopHandle = setTimeout(tick, 1000 / 60);
+    if (simFrozen) return;
+    // one keyboard event per frame
+    if (S.sdlQueue.length && !S.keyBusy) {
+      if (S.keyBuf.length >= KEY_CAP) { setStatus('main', 'blocked: keyPresses full'); } else {
+        const k = S.sdlQueue.shift(); S.keyBusy = true;
+        logMsg('main', 'distributor', 'keyPresses', `'${k}'`);
+        await packet('keys', "'" + k + "'", COLORS.key, 450);
+        if (id !== runId) return;
+        S.keyBuf.push(k); S.keyBusy = false; updateGauges();
+      }
+    }
+    if (S.dirty) { S.dirty = false; S.frames++; drawWindow(); $('frames').textContent = 'frames drawn: ' + S.frames; pulse('main', 120); }
+    $('dirtyflag').textContent = 'dirty: ' + S.dirty; $('dirtyflag').className = S.dirty ? 'dirty' : '';
+  };
+  sdlLoopHandle = setTimeout(tick, 1000 / 60);
+}
+
+/* ================= the distributor side: primitives ================= */
+function stuckOn(id, nodeIds, html) {
+  S.stuck = html; S.blockedNodes = new Set(nodeIds);
+  nodeIds.forEach((n) => nodeEls[n].classList.add('blocked'));
+  setCaption(html);
+}
+// one hop of a message from a goroutine to another along a channel
+async function hop(id, chan, label, color, from, to, payload, caption) {
+  await gate(id);
+  if (caption) setCaption(caption);
+  pulse(from, cfg().hop * 1.2);
+  logMsg(from === 'dist' ? 'distributor' : from, to === 'dist' ? 'distributor' : to, chan, payload || label);
+  await packet(chan, label, color, cfg().hop);
+  check(id);
+  pulse(to, cfg().hop * 0.9);
+}
+async function nilGuard(id, chan, from, to, what) {
+  const info = INFO[chan];
+  if (cfg().skel && info.s === 'todo') {
+    chanEls[chan].classList.add('stuck');
+    stuckOn(id, ['dist', 'io'], `<b>Deadlock-style stall.</b> ${what} <code>${chan}</code> is <b>nil</b> in the skeleton, and a send or receive on a nil channel blocks forever. The distributor is stuck sending, and the IO goroutine is stuck waiting to receive. Nothing else will ever happen in the game: no events, no turns, a blank window. Untick “skeleton exactly as provided” and restart to see the same step once the channel has been created.`);
+    setStatus('dist', 'blocked: nil channel'); setStatus('io', 'blocked: nil channel');
+    await forever(id);
+  }
+}
+async function emit(id, ev) {
+  // send on the events channel
+  const c = cfg(); await gate(id);
+  const label = ev.label;
+  if (c.block) {
+    const need = ev.n || 1;
+    if (S.evtBuf + need > EVT_CAP) {
+      S.evtBuf = EVT_CAP; updateGauges(); chanEls.events.classList.add('stuck');
+      stuckOn(id, ['dist'], `<b>events is full.</b> SDL has stopped reading, so the 1000-slot buffer filled and the distributor’s send on <code>events</code> now blocks. No more turns will run. ${c.perCell ? '' : 'Try “one CellFlipped per cell” to see how much faster a per-cell design fills the buffer.'}`);
+      setStatus('dist', 'blocked: events full'); await forever(id);
+    }
+    S.evtBuf += need; updateGauges(); logMsg('distributor', 'events buffer', 'events', label);
+    setCaption(`SDL is not reading, so <b>${label}</b> just sits in the buffer (${S.evtBuf} of ${EVT_CAP}). The sender only blocks when the buffer is full.`);
+    pulse('dist', c.hop); await sleep(c.hop * 0.4); return;
+  }
+  setCaption(ev.caption || `distributor sends <b>${label}</b> on <code>events</code>.`);
+  pulse('dist', c.hop * 1.2);
+  logMsg('distributor', 'SDL', 'events', label);
+  S.totalEvents += (ev.n || 1);
+  if (ev.n > 1) await burst('events', ev.color, c.hop, label); else await packet('events', label, ev.color, c.hop);
+  check(id);
+  pulse('main', c.hop * 0.8);
+  sdlHandle(ev);
+}
+
+/* ================= game logic (for real flipped cells) ================= */
+function seedWorld() {
+  let s = 12345; const rnd = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
+  const w = new Uint8Array(W * H); for (let i = 0; i < w.length; i++) w[i] = rnd() < 0.28 ? 1 : 0; return w;
+}
+function stepWorld(w) {
+  const next = new Uint8Array(W * H); const flips = [];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    let n = 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (dx || dy) n += w[((y + dy + H) % H) * W + ((x + dx + W) % W)];
+    const cur = w[y * W + x]; const nv = (cur && (n === 2 || n === 3)) || (!cur && n === 3) ? 1 : 0;
+    next[y * W + x] = nv; if (nv !== cur) flips.push(y * W + x);
+  }
+  return { next, flips };
+}
+const alive = (w) => w.reduce((a, b) => a + b, 0);
+
+/* ================= the distributor program (one common design) ================= */
+async function ioLoad(id) {
+  await hop(id, 'ioCommand', 'ioInput', COLORS.cmd, 'dist', 'io', 'ioInput', '<b>Loading.</b> The distributor asks the IO goroutine to read an image: it sends the command <code>ioInput</code> on the unbuffered <code>ioCommand</code>. IO is idle, receiving on that channel, so the send completes at once.');
+  setStatus('io', 'reading');
+  await nilGuard(id, 'ioFilename', 'dist', 'io', 'Sending the filename on');
+  await hop(id, 'ioFilename', '"' + IMG + '"', COLORS.name, 'dist', 'io', '"' + IMG + '"', 'IO now waits for the filename. The distributor sends <code>"' + IMG + '"</code> on <code>ioFilename</code>; IO reads <code>images/' + IMG + '.pgm</code> and checks the header.');
+  await nilGuard(id, 'ioInput', 'io', 'dist', 'Receiving the pixel stream on');
+  await gate(id); setCaption('IO streams the image on <code>ioInput</code>: <b>' + (W * H).toLocaleString() + ' bytes</b>, one <code>uint8</code> per cell, row by row (255 alive, 0 dead). The distributor must receive exactly this many, building its 2D world as it goes.');
+  pulse('io', cfg().hop * 2); logMsg('IO', 'distributor', 'ioInput', (W * H) + ' × uint8');
+  await burst('ioInput', COLORS.byte, cfg().hop * 1.8, W * H + ' × uint8');
+  S.world = seedWorld(); setStatus('io', 'idle'); pulse('dist', cfg().hop);
+}
+async function ioSave(id, name) {
+  await hop(id, 'ioCommand', 'ioOutput', COLORS.cmd, 'dist', 'io', 'ioOutput', '<b>Saving.</b> The distributor sends the command <code>ioOutput</code> on <code>ioCommand</code>.');
+  setStatus('io', 'writing');
+  await nilGuard(id, 'ioFilename', 'dist', 'io', 'Sending the filename on');
+  await hop(id, 'ioFilename', '"' + name + '"', COLORS.name, 'dist', 'io', '"' + name + '"', 'Filename sent: <code>"' + name + '"</code>. Output names are width × height × completed turns, and the tests check this exactly.');
+  await nilGuard(id, 'ioOutput', 'dist', 'io', 'Sending the cell values on');
+  await gate(id); setCaption('The distributor sends all <b>' + (W * H).toLocaleString() + ' cells</b> of its <em>current</em> world on <code>ioOutput</code>, row by row. IO collects exactly that many bytes, then writes <code>out/' + name + '.pgm</code>.');
+  pulse('dist', cfg().hop * 2); logMsg('distributor', 'IO', 'ioOutput', (W * H) + ' × uint8');
+  await burst('ioOutput', COLORS.byte, cfg().hop * 1.8, W * H + ' × uint8');
+  pulse('io', cfg().hop); logConsole(`[IO] File ${name}.pgm output done`); setStatus('io', 'idle');
+  await emit(id, { t: 'out', turn: S.turn, name, label: 'ImageOutputComplete', color: COLORS.done, caption: 'Image saved. The distributor sends <b>ImageOutputComplete</b> with the filename and the number of completed turns.' });
+}
+async function doTurn(id) {
+  const c = cfg();
+  // workers: tasks out, compute, results back
+  await gate(id); setCaption('<b>Turn ' + (S.turn + 1) + '.</b> The distributor hands each worker its strip of the previous world. (How you do this is your design: the model sends a task per worker.)');
+  logMsg('distributor', 'workers', 'task×' + THREADS, 'strip + world');
+  pulse('dist', c.hop);
+  await Promise.all([...Array(THREADS).keys()].map((i) => packet('task' + i, 'strip', COLORS.work, c.hop)));
+  check(id);
+  const { next, flips } = stepWorld(S.world);
+  for (let i = 0; i < THREADS; i++) pulse('w' + i, c.hop * 1.2);
+  await sleep(c.hop * 0.6);
+  await gate(id); setCaption('Workers return their results. Only after <b>all</b> workers have reported can the distributor move to the next turn, because every cell needs the whole previous generation.');
+  logMsg('workers', 'distributor', 'result×' + THREADS, 'next strips');
+  await Promise.all([...Array(THREADS).keys()].map((i) => packet('res' + i, 'rows', COLORS.work, c.hop)));
+  check(id); pulse('dist', c.hop);
+  S.world = next; S.turn++;
+  if (c.perCell) {
+    await emit(id, { t: 'flips', cells: flips, n: Math.max(flips.length, 1), turn: S.turn, label: flips.length + ' × CellFlipped', color: COLORS.flip, caption: `One <b>CellFlipped</b> event per flipped cell: <b>${flips.length}</b> separate sends on <code>events</code> this turn. This is a lot of channel traffic.` });
+  } else {
+    await emit(id, { t: 'flips', cells: flips, n: 1, turn: S.turn, label: 'CellsFlipped (' + flips.length + ')', color: COLORS.flip, caption: `One <b>CellsFlipped</b> event carrying all <b>${flips.length}</b> cells that changed. Fewer, bigger messages mean less synchronisation.` });
+  }
+  await emit(id, { t: 'turn', turn: S.turn, label: 'TurnComplete', color: COLORS.turn, caption: 'All flips for the turn are sent <em>before</em> <b>TurnComplete</b>. When SDL receives it, it sets <em>dirty</em>, and the next 60 FPS tick draws a frame.' });
+}
+async function handleInputs(id) {
+  const c = cfg();
+  if (S.tickPending) {
+    S.tickPending = false;
+    await emit(id, { t: 'count', turn: S.turn, n: alive(S.world), label: 'AliveCellsCount', color: COLORS.count, caption: 'The 2 s ticker fired. Because this is checked <em>between</em> turns, the count and the completed-turn number belong together. Reporting mid-turn would give a mismatch.' });
+  }
+  while (S.keyBuf.length) {
+    const k = S.keyBuf.shift(); updateGauges(); chanEls.keys.classList.add('sel'); setTimeout(() => chanEls.keys.classList.remove('sel'), 400);
+    logMsg('keyPresses', 'distributor', 'receive', "'" + k + "'");
+    if (k === 'p') {
+      S.paused = !S.paused; setStatus('dist', S.paused ? 'turn ' + S.turn + ' · Paused' : 'turn ' + S.turn + ' · Executing');
+      await emit(id, { t: 'state', turn: S.turn, s: S.paused ? 'Paused' : 'Executing', label: 'StateChange: ' + (S.paused ? 'Paused' : 'Executing'), color: COLORS.state, caption: S.paused ? '<b>p</b> received: the distributor stops starting new turns and sends <b>StateChange(Paused)</b>. It keeps receiving, so <b>s</b>, <b>q</b> and the ticker still work while paused.' : '<b>p</b> received again: sends <b>StateChange(Executing)</b> and carries on from the same turn.' });
+    } else if (k === 's') {
+      setCaption('<b>s</b> received: save the current world as a PGM, without stopping.');
+      await ioSave(id, IMG + 'x' + S.turn);
+    } else if (k === 'q') {
+      S.quitReq = true; setCaption('<b>q</b> received: finish up. The current turn is already complete, so: final state, save, then shut down.'); await gate(id); break;
+    } else if (k === 'k') {
+      await gate(id); setCaption('<b>k</b> was forwarded by SDL. The parallel brief does not use it (the distributed controller uses it to shut the system down), so this distributor ignores it.');
+    }
+  }
+}
+async function distributorProgram(id) {
+  setStatus('dist', 'loading');
+  await ioLoad(id);
+  // initial alive cells become flips (before the first StateChange, as the brief requires)
+  const initial = []; for (let i = 0; i < W * H; i++) if (S.world[i]) initial.push(i);
+  await emit(id, { t: 'flips', cells: initial, n: 1, turn: 0, label: 'CellsFlipped (' + initial.length + ' alive)', color: COLORS.flip, caption: 'Every initially alive cell is reported as a flip, <em>before</em> the first StateChange. SDL’s pixel buffer is updated, but nothing is drawn until a TurnComplete arrives.' });
+  setStatus('dist', 'turn 0 · Executing');
+  await emit(id, { t: 'state', turn: 0, s: 'Executing', label: 'StateChange: Executing', color: COLORS.state, caption: 'The skeleton’s own first line: <b>StateChange(Executing)</b> for turn 0.' });
+  S.started = true;
+  while (!S.quitReq && S.turn < cfg().turns) {
+    await handleInputs(id); if (S.quitReq) break;
+    if (S.paused) {
+      setStatus('dist', 'turn ' + S.turn + ' · Paused');
+      while (S.paused && !S.keyBuf.length && !S.tickPending) { await sleep(60); check(id); while (simFrozen) { await sleep(60); check(id); } }
+      continue;
+    }
+    setStatus('dist', 'turn ' + S.turn + ' · Executing');
+    await doTurn(id);
+  }
+  // shutdown
+  setStatus('dist', 'finishing');
+  await emit(id, { t: 'final', turn: S.turn, label: 'FinalTurnComplete', color: COLORS.done, caption: 'Run finished (all turns or <b>q</b>). <b>FinalTurnComplete</b> carries the list of alive cells; the tests check it directly.' });
+  await ioSave(id, IMG + 'x' + S.turn);
+  await hop(id, 'ioCommand', 'ioCheckIdle', COLORS.cmd, 'dist', 'io', 'ioCheckIdle', '<b>Before exiting</b>, the distributor asks the IO goroutine whether it is idle, so no PGM write can be cut short.');
+  await hop(id, 'ioIdle', 'true', COLORS.idle, 'io', 'dist', 'true', 'IO handles one command at a time, so receiving <code>true</code> on <code>ioIdle</code> proves every earlier write has finished.');
+  await emit(id, { t: 'state', turn: S.turn, s: 'Quitting', label: 'StateChange: Quitting', color: COLORS.state, caption: 'The distributor sends <b>StateChange(Quitting)</b>.' });
+  await gate(id); setCaption('<b>close(events)</b>. This is how SDL knows to leave its loop and destroy the window. The skeleton warns that removing it may cause a deadlock.');
+  logMsg('distributor', 'SDL', 'events', 'close');
+  await packet('events', 'close', COLORS.close, cfg().hop); sdlHandle({ t: 'close' });
+  setStatus('dist', 'returned'); setStatus('io', 'blocked on ioCommand');
+  await gate(id); setCaption('<b>Finished.</b> gol.Run returns, sdl.Run returns, main() returns and the program exits. The IO goroutine is still blocked on <code>ioCommand</code>, but it dies with the process.');
+  S.done = true; S.exited = true; $('btnStart').textContent = '▶ Restart'; $('btnSimPause').disabled = true; $('btnNext').disabled = true;
+}
+
+/* ================= start-up sequence ================= */
+async function boot(id) {
+  const c = cfg();
+  await gate(id); setCaption('<b>main()</b> parses flags, then makes two channels: <code>keyPresses</code> (buffer 10) and <code>events</code> (buffer 1000). It locked its OS thread first, because SDL must run on the main thread.');
+  pulse('main', c.hop * 1.5); setStatus('main', 'running'); logMsg('main', '-', 'make', 'keyPresses (10), events (1000)');
+  await sleep(c.hop * 0.6);
+  await gate(id); setCaption('<code>go sigint()</code> starts the signal-handling goroutine. It is independent of the game.');
+  pulse('sig', c.hop * 1.5); setStatus('sig', 'waiting for a signal'); await sleep(c.hop * 0.6);
+  await gate(id); setCaption('<code>go gol.Run(params, events, keyPresses)</code> starts the game goroutine. <code>gol.Run</code> makes the io channels, starts the IO goroutine with <code>go startIo</code>, then calls <code>distributor</code> itself.');
+  pulse('dist', c.hop * 1.5); pulse('io', c.hop * 1.5); setStatus('io', 'idle (on ioCommand)'); await sleep(c.hop * 0.6);
+  await gate(id); setCaption('Finally the main goroutine calls <code>sdl.Run</code>: a loop that selects between a 60 FPS ticker (poll keyboard, draw if dirty) and the <code>events</code> channel. From here, three goroutines run concurrently, plus whatever workers you add.');
+  pulse('main', c.hop * 1.5); startSdlLoop(id); await sleep(c.hop * 0.6);
+}
+
+/* ================= control wiring ================= */
+function inspect(id) {
+  document.querySelectorAll('.chan.sel').forEach((e) => e.classList.remove('sel'));
+  if (chanEls[id]) chanEls[id].classList.add('sel');
+  const i = INFO[id]; if (!i) return;
+  const badge = { provided: 'provided', yours: 'you write this', todo: 'nil: you create it', suggest: 'suggested addition' }[i.s];
+  let h = `<p style="margin:0 0 6px"><b>${i.n}</b> <span class="badge ${i.s}">${badge}</span></p><dl>`;
+  if (i.ty) h += `<dt>Type</dt><dd><code>${i.ty.replace(/</g, '&lt;')}</code></dd><dt>Direction</dt><dd>${i.d}</dd><dt>Created in</dt><dd>${i.c}</dd>`;
+  if (i.t) h += `<dt>What</dt><dd>${i.t}</dd>`;
+  h += `<dt>Role</dt><dd>${i.r}</dd>`;
+  if (i.b) h += `<dt>Blocking</dt><dd>${i.b}</dd>`;
+  $('info').innerHTML = h + '</dl>';
+}
+function pressKey(k) {
+  if (!S.running) { setCaption('Press <b>Start</b> first: there is no running program to send keys to.'); return; }
+  if (S.exited) return;
+  S.sdlQueue.push(k); logMsg('OS', 'main', 'SDL event', "'" + k + "' (queued)");
+  packet('osKey', k.toUpperCase(), COLORS.key, 300);
+}
+async function start() {
+  runId++; const id = runId; clearTimeout(sdlLoopHandle);
+  if (cancelFn) cancelFn(new Error('cancelled'));
+  cancelled = new Promise((_, rej) => { cancelFn = rej; }); cancelled.catch(() => {});
+  document.querySelectorAll('.pkt').forEach((e) => e.remove());
+  resetState(); S.running = true; simFrozen = false; updateGauges();
+  for (const k in nodeEls) { nodeEls[k].classList.remove('blocked', 'active'); setStatus(k, ''); }
+  for (const k in chanEls) chanEls[k].classList.remove('stuck', 'sel');
+  $('console').innerHTML = ''; $('msglog').innerHTML = ''; $('frames').textContent = 'frames drawn: 0';
+  drawWindow(); $('arm').textContent = '';
+  $('btnStart').textContent = '↻ Restart'; $('btnSimPause').disabled = false; $('btnSimPause').textContent = '⏸ Freeze'; $('btnNext').disabled = true;
+  logConsole('[Main] Threads    ' + THREADS); logConsole('[Main] Width      ' + W); logConsole('[Main] Height     ' + H);
+  try { await boot(id); await distributorProgram(id); } catch (e) { if (e.message !== 'cancelled') console.error(e); }
+}
+$('btnStart').addEventListener('click', start);
+$('btnSimPause').addEventListener('click', () => { simFrozen = !simFrozen; $('btnSimPause').textContent = simFrozen ? '▶ Unfreeze' : '⏸ Freeze'; });
+$('btnNext').addEventListener('click', () => { if (nextResolve) { const r = nextResolve; nextResolve = null; r(); } });
+$('mode').addEventListener('change', () => { if ($('mode').value === 'live' && nextResolve) { const r = nextResolve; nextResolve = null; r(); $('btnNext').disabled = true; } });
+document.querySelectorAll('button.key').forEach((b) => b.addEventListener('click', () => pressKey(b.dataset.k)));
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.ctrlKey || e.metaKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (['p', 's', 'q', 'k'].includes(k)) pressKey(k); else if (e.key === 'Escape') pressKey('q');
+});
+$('btnTick').addEventListener('click', () => { if (S.started && !S.exited) { S.tickPending = true; setStatus('tick', 'fired'); pulse('tick', 600); packet('tickC', 'tick', COLORS.count, 300); setTimeout(() => setStatus('tick', ''), 800); } });
+setInterval(() => {
+  if (!S.started || S.exited || simFrozen || !$('optTick').checked || cfg().mode === 'step') return;
+  $('btnTick').click();
+}, 2000);
+$('btnCtrlC').addEventListener('click', () => {
+  const now = Date.now(); pulse('sig', 900);
+  if (S.armedUntil > now) {
+    logConsole('[Main] WARN Force quit by the user'); logMsg('sigint', 'process', 'os.Exit(0)', 'no clean shutdown');
+    setCaption('<b>Second Ctrl+C within 4 s:</b> the sigint goroutine calls <code>os.Exit(0)</code>. Every goroutine dies at once: no save, no FinalTurnComplete, no close(events).');
+    runId++; if (cancelFn) cancelFn(new Error('cancelled')); S.exited = true; $('arm').textContent = ''; setStatus('sig', 'os.Exit(0)'); $('btnSimPause').disabled = true; $('btnNext').disabled = true; $('btnStart').textContent = '▶ Restart';
+    for (const k in nodeEls) nodeEls[k].classList.add('blocked');
+  } else {
+    S.armedUntil = now + 4000; logConsole('[Main] WARN Press Ctrl+C again to force quit');
+    setCaption('<b>First Ctrl+C:</b> the sigint goroutine only prints a warning and arms a 4 second window. Press Ctrl+C again before it expires to exit immediately.');
+    const t = setInterval(() => { const left = S.armedUntil - Date.now(); if (left <= 0 || S.exited) { clearInterval(t); $('arm').textContent = ''; } else $('arm').textContent = ' second press within ' + (left / 1000).toFixed(1) + ' s quits'; }, 100);
+  }
+});
+$('optSkel').addEventListener('change', () => document.documentElement.classList.toggle('skeleton', $('optSkel').checked));
+$('optBlock').addEventListener('change', () => { if (!$('optBlock').checked) { S.evtBuf = 0; updateGauges(); chanEls.events.classList.remove('stuck'); } });
+updateGauges(); drawWindow();
+</script>
+</body>
+</html>

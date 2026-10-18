@@ -59,6 +59,14 @@ function golangDocs(): DefaultTheme.SidebarItem[] {
             { text: 'Step 6', link: '/golang/parallel/step-6' },
             { text: 'Success Criteria', link: '/golang/parallel/success-criteria' },
             { text: 'In Your Report', link: '/golang/parallel/in-your-report' },
+            { text: 'Extension: Three Memory Strategies', collapsed: true, link: '/golang/parallel/approaches/', items:
+              [
+                { text: '1 · Heap Allocation', link: '/golang/parallel/approaches/heap-allocation' },
+                { text: '2 · Double Buffer', link: '/golang/parallel/approaches/double-buffer' },
+                { text: '3 · Map-Reduce', link: '/golang/parallel/approaches/map-reduce' },
+                { text: 'Benchmarking and Testing', link: '/golang/parallel/approaches/benchmarking' },
+              ]
+            },
           ]
         },
         { text: 'Distributed Implementation', collapsed: true, link: '/golang/distributed/', items:
