@@ -1,7 +1,7 @@
 # Useful Links
 
 ::: info Video walkthrough of parallel component
-[Watch here](https://web.microsoftstream.com/video/990e039f-4bc1-4b22-b0b1-ae895ee07163)
+[Watch here](https://uob-my.sharepoint.com/:v:/r/personal/sh1670_bristol_ac_uk/Documents/Stream%20Migrated%20Videos/COMS20008%20Summative%20Assignment%20(Game%20of%20Life)%20intro-20211028_074938.mp4?d=w36b64e448dd659e19c76d5ba68dec37b&csf=1&web=1&e=9OnUfW&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D)
 
 Note that submission date is incorrect in the video!
 
