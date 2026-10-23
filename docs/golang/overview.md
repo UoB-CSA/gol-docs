@@ -32,7 +32,7 @@ AI is part of this coursework, and the rules differ between the two implementati
 
 | Part | AI use |
 |---|---|
-| Parallel implementation | **Stronly Encouraged / Anticipated** |
+| Parallel implementation | **Strongly Encouraged / Anticipated** |
 | Distributed implementation | **Permissible** (optional) |
 
 - Use the **University-provided Copilot** to generate code. Whenever you use AI to generate code for either part, this is the tool you should use.
