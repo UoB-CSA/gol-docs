@@ -32,11 +32,11 @@ AI is part of this coursework, and the rules differ between the two implementati
 
 | Part | AI use |
 |---|---|
-| Parallel implementation | **Mandatory** |
+| Parallel implementation | **Stronly Encouraged / Anticipated** |
 | Distributed implementation | **Permissible** (optional) |
 
 - Use the **University-provided Copilot** to generate code. Whenever you use AI to generate code for either part, this is the tool you should use.
-- For the **parallel** implementation you are required to use AI for code generation, and to keep a record of how you used it.
+- For the **parallel** implementation you are strongly encouraged to use AI for code generation, and to keep a record of how you used it.
 - For the **distributed** implementation you may use AI in the same way, but you are not required to.
 - You must record every prompt you use, and submit those records in `ai-prompts.zip`. See [Submission](../submission#submission-folder-structure) for what to include and where it goes.
 
@@ -44,6 +44,8 @@ AI is part of this coursework, and the rules differ between the two implementati
 The University-provided Copilot does not accept every file type. In particular, you may find that it will not take **Go (`.go`) files** directly. Getting your code and the skeleton into a form it can work with is **part of the exercise**: you will need to experiment to find workarounds that suit you.
 Keep a note of any workaround alongside the prompts you recorded, so that it is clear what the model was given.
 :::
+
+Further AI guidance and rationale is explained [here.](ai-use-and-viva.md)
 
 ## Skeleton Code
 
