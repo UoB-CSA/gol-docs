@@ -1,6 +1,6 @@
 # Secure and Fault-Tolerant Replicated Control Plane
 
-The distributed implementation currently relies on a central distributor or broker to coordinate workers. This creates a single point of failure: if that process becomes unavailable, the system may no longer be able to allocate work, track workers, or control execution.
+The distributed implementation currently relies on a central distributor or broker to coordinate workers. This creates a single point of failure: if that process becomes unavailable, the system may no longer be able to allocate work, track workers, or control execution. See this [link](https://uob-csa.github.io/website/vis/sum/raft.html) to try an interactive explanation. 
 
 <div class="vg">
 <div class="vgt">Visual guide: what is changing</div>
