@@ -15,7 +15,7 @@ Please note that the rest of assignment will be introduced after reading week.
 :::
 
 ::: info Video Walkthrough of Distributed Component
-[Watch here](https://uob-my.sharepoint.com/:v:/r/personal/sh1670_bristol_ac_uk/Documents/Stream%20Migrated%20Videos/COMS20008%20Summative%20Assignment%20(Game%20of%20Life)%20intro%20(distributed)-20211107_040327.mp4)
+[Watch here](https://uob-my.sharepoint.com/:v:/g/personal/sh1670_bristol_ac_uk/IQBduCg30E95X6rUpzDzbm9HAe5EVe51_3tcl4fraj17OY0?e=z4ZYVY)
 :::
 
 ::: info Video Walkthrough of Report Component
