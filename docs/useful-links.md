@@ -19,7 +19,7 @@ Please note that the rest of assignment will be introduced after reading week.
 :::
 
 ::: info Video Walkthrough of Report Component
-[Watch here](https://web.microsoftstream.com/video/b5e8cf95-981c-4c26-8522-cc0210293d51)
+[Watch here](https://uob-my.sharepoint.com/:v:/g/personal/sh1670_bristol_ac_uk/IQDo1eZ7PGHcUw-eMK1zE9oWAesxBFp-pgQ2xewGSIYL-OA?e=z5R8hb)
 
 Also see this document which accompanies the video:
 [report guidance](/report-guidance.md)
