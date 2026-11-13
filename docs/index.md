@@ -9,7 +9,7 @@ You must report any change to your pairing to the unit director *before* startin
 It runs over 4 weeks.
 
 ::: warning Note on deadline
-The deadline for submitting all your work is **TBD**
+The deadline for submitting all your work is **19th November before 1300**
 :::
 
 Talk to each other regularly and make sure you manage your team well.
